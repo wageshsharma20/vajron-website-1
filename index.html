@@ -73,7 +73,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .dim{color:var(--ink-dim)}
 .lbl{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.18em;
   text-transform:uppercase;color:var(--oasis);display:block}
-.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--oasis);color:var(--void);
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--void);color:var(--oasis);
   padding:.7rem 1.1rem;font-family:var(--mono);font-size:var(--t-label);text-decoration:none}
 .skip:focus{left:1rem;top:1rem}
 
@@ -113,17 +113,22 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .scan-hi{fill:none;stroke:var(--corn);stroke-width:2}
 
 /* ---------- nav ---------- */
+/* The header is a light band so the wordmark can sit in its own blue.
+   It is the one fixed surface on the page that is not part of the film. */
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;
   gap:1.5rem;padding-inline:var(--pad);padding-top:env(safe-area-inset-top);
-  background:linear-gradient(to bottom,rgba(7,19,36,.94),rgba(7,19,36,0))}
+  background:var(--oasis);border-bottom:1px solid rgba(11,26,46,.16);
+  box-shadow:0 10px 30px rgba(4,10,20,.32)}
 .nav__mark{display:flex;align-items:center;gap:.6rem;text-decoration:none}
 .nav__mark span{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.2em;
-  text-transform:uppercase;color:var(--ink-dim)}
+  text-transform:uppercase;color:rgba(11,26,46,.70)}
 .nav__links{display:flex;gap:1.4rem;margin-left:auto}
 .nav__links a{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.11em;
-  text-transform:uppercase;color:var(--ink-dim);text-decoration:none;white-space:nowrap;
+  text-transform:uppercase;color:rgba(11,26,46,.66);text-decoration:none;white-space:nowrap;
   transition:color 180ms var(--ease);touch-action:manipulation}
-.nav__links a:hover{color:var(--corn)}
+.nav__links a:hover{color:#0B1A2E}
+/* the page-wide focus ring is a light cyan; it would vanish on this band */
+.nav :where(a,button):focus-visible{outline-color:#0B1A2E}
 @media (max-width:880px){.nav__links{display:none}}
 #prog{position:fixed;top:0;left:0;height:1px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   background:var(--torch);z-index:101;opacity:.95}
@@ -645,7 +650,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   <div class="wrap">
     <div class="foot__row">
       <div>
-        <img src="assets/vajron-logo.png" width="560" height="323" alt="VAJRON Global Tech" style="height:42px;width:auto">
+        <img src="assets/vajron-logo-light.png" width="560" height="323" alt="VAJRON Global Tech" style="height:42px;width:auto">
         <p class="mono" style="font-size:var(--t-micro);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:var(--s2)">VAJRON Global Tech Pvt. Ltd.</p>
       </div>
 
@@ -1065,7 +1070,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
     var sec = document.querySelector(a.getAttribute('href'));
     if (!sec) return;
     ScrollTrigger.create({ trigger:sec, start:'top 45%', end:'bottom 45%',
-      onToggle:function(s){ a.style.color = s.isActive ? 'var(--corn)' : ''; }});
+      onToggle:function(s){ a.style.color = s.isActive ? '#1A5C9E' : ''; }});
   });
 
   rail.addEventListener('keydown', function(e){
