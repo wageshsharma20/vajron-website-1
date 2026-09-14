@@ -1092,7 +1092,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
 
   /* the one perpetual motion on the page: a 360 degree LiDAR sweeps. */
-  gsap.to('#omni-sweep',{ rotation:360, transformOrigin:'500px 313px', duration:7, repeat:-1, ease:'none' });
+  /* svgOrigin, not transformOrigin: with px values GSAP measures from the
+     element's own bounding box, which pivots the sweep off the LiDAR puck.
+     svgOrigin is in the SVG's user space, where the puck is at 500,313. */
+  gsap.to('#omni-sweep',{ rotation:360, svgOrigin:'500 313', duration:7, repeat:-1, ease:'none' });
 
   /* nav reflects position */
   [].slice.call(document.querySelectorAll('.nav__links a')).forEach(function(a){
