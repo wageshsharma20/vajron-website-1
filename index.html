@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>document.documentElement.className+=' js';</script>
+<title>VAJRON Inspection UAS</title>
+<meta name="description" content="Technical specification for the VAJRON autonomous inspection aircraft. Seven-sensor perception suite, 360 degree LiDAR at 15 m, 30x optical zoom on a 3-axis gimbal, onboard NVIDIA Jetson edge AI and centimetre-accurate RTK navigation.">
+<meta name="theme-color" content="#060D1A">
+<meta property="og:title" content="VAJRON Inspection UAS">
+<meta property="og:description" content="Seven-sensor perception, onboard edge AI, centimetre-accurate RTK navigation.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/drone-hero-1400.png" fetchpriority="high">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   VAJRON autonomous inspection aircraft - technical spec page
+   One accent family (blue). Signal red is a STATE only:
+   inhibit, denial, lock.
+   ========================================================== */
+:root{
+  color-scheme:dark;
+  --void:#060D1A; --ground:#0A1428; --panel:#0F1E38; --panel-2:#16294A;
+  --marino:#43569A; --havelock:#6483E0; --charlotte:#BEF3FA; --signal:#E2483C;
+  --white:#FFF; --ebb:#EAE1E0;
+  --ink:rgba(234,225,224,.88); --ink-dim:rgba(234,225,224,.66); --ink-faint:rgba(234,225,224,.42);
+  --line:rgba(190,243,250,.14); --line-hi:rgba(190,243,250,.32);
+
+  --display:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --t-mega:clamp(2.4rem,1rem + 5.2vw,5.4rem);
+  --t-h1:clamp(2rem,1.05rem + 3.1vw,3.7rem);
+  --t-h2:clamp(1.55rem,1.1rem + 1.9vw,2.6rem);
+  --t-h3:clamp(1.12rem,1.02rem + .5vw,1.42rem);
+  --t-num:clamp(2.6rem,1.4rem + 5vw,5.6rem);
+  --t-lead:clamp(1.05rem,.98rem + .55vw,1.32rem);
+  --t-body:clamp(.95rem,.93rem + .16vw,1.05rem);
+  --t-small:.9rem; --t-label:.69rem; --t-micro:.625rem;
+
+  --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2rem; --s5:3rem; --s6:4.5rem;
+  --bay:clamp(4.5rem,2.5rem + 7vw,9rem);
+  --pad:clamp(1.25rem,.5rem + 3vw,4.5rem);
+  --maxw:1380px;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--display);
+  font-size:var(--t-body);line-height:1.55;-webkit-font-smoothing:antialiased;
+  font-synthesis-weight:none;overflow-x:hidden}
+img{max-width:100%;display:block}
+h1,h2,h3{margin:0;color:var(--white);font-weight:600;letter-spacing:-.028em;line-height:1.05;text-wrap:balance}
+p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
+:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--charlotte);outline-offset:3px}
+::selection{background:var(--havelock);color:#fff}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad)}
+.bay{padding-block:var(--bay)}
+.lead{font-size:var(--t-lead);color:var(--ebb);line-height:1.42;max-width:36ch}
+.body{font-size:var(--t-body);color:var(--ink);max-width:60ch}
+.body+.body{margin-top:var(--s2)}
+.dim{color:var(--ink-dim)}
+.lbl{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--charlotte);display:block}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--charlotte);color:var(--void);
+  padding:.7rem 1.1rem;font-family:var(--mono);font-size:var(--t-label);text-decoration:none}
+.skip:focus{left:1rem;top:1rem}
+
+/* ---------- fixed environment ---------- */
+.env{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#key{position:absolute;left:50%;top:46%;width:150vmax;aspect-ratio:1;margin:-75vmax 0 0 -75vmax;
+  border-radius:50%;will-change:transform,opacity;
+  background:radial-gradient(circle,rgba(100,131,224,.34) 0%,rgba(67,86,154,.14) 32%,rgba(10,20,40,0) 66%);
+  filter:blur(46px)}
+#grid{position:absolute;inset:-6%;will-change:transform;
+  background-image:linear-gradient(to right,rgba(190,243,250,.055) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(190,243,250,.055) 1px,transparent 1px);
+  background-size:96px 96px;
+  -webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%);
+  mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%)}
+.vig{position:absolute;inset:0;opacity:.85;
+  background:radial-gradient(120% 92% at 50% 44%,transparent 36%,#060D1A 100%)}
+
+/* ---------- THE AIRCRAFT LAYER ----------
+   One element for the whole film. Never re-mounted, never duplicated.
+   The camera moves around it; it does not scroll past.               */
+#craft{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;place-items:center}
+#craft-inner{position:relative;width:min(70vw,840px);will-change:transform;display:grid}
+#craft-photo,#craft-schem{grid-area:1/1;width:100%}
+#craft-photo img{width:100%;height:auto;filter:drop-shadow(0 40px 70px rgba(0,0,0,.62))}
+#craft-schem{opacity:0}
+#craft-schem svg{width:100%;height:auto;overflow:visible}
+
+.sk-fill{fill:#16294A} .sk-fill-2{fill:#1E3563}
+.sk-stroke{fill:none;stroke:#43569A;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.sk-thin{fill:none;stroke:rgba(67,86,154,.6);stroke-width:1.4}
+.sk-prop{fill:rgba(67,86,154,.26)}
+.sk-collar{fill:#8E3A34}
+.part .sk-fill,.part .sk-fill-2,.part .sk-stroke,.part .sk-thin{
+  transition:fill 320ms var(--ease),stroke 320ms var(--ease)}
+.part.on .sk-fill{fill:#2B4374}
+.part.on .sk-fill-2{fill:#3A5A9C}
+.part.on .sk-stroke{stroke:var(--charlotte)}
+.part.on .sk-thin{stroke:rgba(190,243,250,.8)}
+.scan{opacity:0}
+.scan-line{fill:none;stroke:var(--havelock);stroke-width:2}
+.scan-fill{fill:rgba(100,131,224,.14)}
+.scan-hi{fill:none;stroke:var(--charlotte);stroke-width:2}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;
+  gap:1.5rem;padding-inline:var(--pad);padding-top:env(safe-area-inset-top);
+  background:linear-gradient(to bottom,rgba(6,13,26,.94),rgba(6,13,26,0))}
+.nav__mark{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.nav__mark span{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-faint)}
+.nav__links{display:flex;gap:1.4rem;margin-left:auto}
+.nav__links a{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-dim);text-decoration:none;white-space:nowrap;
+  transition:color 180ms var(--ease);touch-action:manipulation}
+.nav__links a:hover{color:var(--charlotte)}
+@media (max-width:880px){.nav__links{display:none}}
+#prog{position:fixed;top:0;left:0;height:1px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:var(--charlotte);z-index:101;opacity:.9}
+
+/* ---------- scenes ---------- */
+.scene{position:relative;z-index:2}
+.pin{position:sticky;top:0;height:100svh;display:grid;align-content:center;
+  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:64px}
+
+/* 01 hero */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  gap:clamp(1.5rem,3vh,3rem);padding-top:calc(64px + var(--s4));padding-bottom:var(--s5)}
+.hero__copy{position:relative;z-index:2}
+.hero__title{font-size:clamp(2.05rem,1rem + 3.1vw,3.7rem);font-variation-settings:'wdth' 110;
+  font-weight:700;letter-spacing:-.032em;line-height:1.02;color:var(--white);max-width:17ch}
+.hero__strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);width:100%;position:relative;z-index:2}
+.hero__strip div{flex:1 1 128px;padding:.9rem 1rem .2rem 0}
+.hero__strip div+div{border-left:1px solid var(--line);padding-left:1rem}
+.hero__strip b{display:block;font-family:var(--mono);font-weight:500;font-size:1.45rem;
+  color:var(--charlotte);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hero__strip i{font-style:normal;font-size:.62em}
+.hero__strip span{display:block;font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:.3rem}
+
+/* 02 statement */
+.stmt{max-width:19ch;font-size:var(--t-mega);font-variation-settings:'wdth' 114;font-weight:700;
+  letter-spacing:-.034em;line-height:1.02}
+.stmt em{font-style:normal;color:var(--charlotte)}
+
+/* 03 sensor act */
+.act__stage{position:sticky;top:0;height:100svh;display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;
+  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:64px}
+.cal{position:relative;min-height:450px;z-index:2}
+.cal__item{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(14px)}
+.cal__item.on{opacity:1;pointer-events:auto;transform:none;
+  transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.cal__ix{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.2em;color:var(--ink-faint)}
+.cal__ix b{color:var(--charlotte);font-weight:500}
+.cal__title{font-size:var(--t-h2);margin:var(--s2) 0}
+.cal__sub{font-size:var(--t-body);color:var(--ink);max-width:44ch}
+.cal__num{font-family:var(--mono);font-weight:500;font-size:var(--t-num);color:var(--charlotte);
+  font-variant-numeric:tabular-nums;letter-spacing:-.025em;line-height:1;margin:var(--s4) 0 .3rem}
+.cal__num i{font-style:normal;font-size:.36em;color:rgba(190,243,250,.6);margin-left:.1em}
+.cal__nl{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-faint)}
+.cal__list{margin-top:var(--s4);border-top:1px solid var(--line)}
+.cal__list li{padding:.65rem 0;border-bottom:1px solid var(--line);font-size:var(--t-small);color:var(--ink-dim)}
+.rail{position:absolute;left:var(--pad);top:50%;transform:translateY(-50%);display:grid;gap:.55rem;z-index:3}
+.rail button{width:24px;height:22px;padding:0;border:0;background:none;cursor:pointer;position:relative;
+  touch-action:manipulation}
+.rail button::after{content:"";position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--marino);
+  transform:translateY(-50%);transition:width 280ms var(--ease),background 280ms var(--ease)}
+.rail button[aria-current="true"]::after{width:24px;background:var(--charlotte)}
+.rail button:hover::after{background:var(--havelock)}
+@media (max-width:1200px){.rail{display:none}}
+@media (max-width:900px){
+  .act__stage{grid-template-columns:1fr;align-content:end;padding-bottom:var(--s5)}
+  .cal{min-height:310px}
+  .cal__list{display:none}
+}
+
+/* cut to light */
+.light{position:relative;z-index:2;background:var(--ebb);color:#0A1428}
+.light h2,.light h3{color:#0A1428}
+.light .body{color:rgba(10,20,40,.8)}
+.light .lbl{color:#43569A}
+.light figure img{width:100%;height:auto;mix-blend-mode:multiply}
+.light .cap{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(10,20,40,.55);margin-top:var(--s3)}
+
+/* split */
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:var(--s6);align-items:center}
+.split--rev figure{order:-1}
+@media (max-width:900px){.split{grid-template-columns:1fr;gap:var(--s4)}.split--rev figure{order:0}}
+
+/* strip */
+.strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:var(--s4)}
+.strip li{flex:1 1 auto;padding:.85rem 1.1rem .85rem 0;font-family:var(--mono);font-size:var(--t-label);
+  letter-spacing:.11em;text-transform:uppercase;color:var(--charlotte)}
+.strip li+li{border-left:1px solid var(--line);padding-left:1.1rem}
+
+/* flight gates */
+.gates{display:grid;grid-template-columns:repeat(4,1fr);margin-top:var(--s6);border-top:1px solid var(--line)}
+.gates li{padding:var(--s4) var(--s3) var(--s4) 0;position:relative}
+.gates li+li{border-left:1px solid var(--line);padding-left:var(--s3)}
+.gates li::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--charlotte);
+  transition:width 800ms var(--ease)}
+.gates li.on::before{width:100%}
+.gates__n{display:block;font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;
+  color:var(--charlotte);margin-bottom:var(--s2)}
+.gates h3{font-size:var(--t-h3);margin-bottom:.55rem}
+.gates p{font-size:var(--t-small);color:var(--ink-dim)}
+@media (max-width:860px){.gates{grid-template-columns:1fr 1fr}
+  .gates li:nth-child(3){border-left:0;padding-left:0}
+  .gates li:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:540px){.gates{grid-template-columns:1fr}
+  .gates li+li{border-left:0;padding-left:0;border-top:1px solid var(--line)}}
+
+/* interlocks */
+.lock{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:var(--s6)}
+.lock__i{background:var(--void);padding:var(--s4)}
+.lock__tag{display:inline-block;font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.22em;
+  text-transform:uppercase;color:var(--signal);border:1px solid rgba(226,72,60,.45);
+  padding:.22rem .5rem;margin-bottom:var(--s3)}
+.lock__i h3{font-size:var(--t-h3);margin-bottom:.7rem}
+.lock__i p{font-size:var(--t-small);color:var(--ink-dim);max-width:56ch}
+@media (min-width:900px){.lock{grid-template-columns:1fr 1fr}.lock__i:last-child{grid-column:1/-1}}
+
+/* spec table */
+.spec table{width:100%;border-collapse:collapse;font-size:var(--t-small)}
+.spec th,.spec td{text-align:left;padding:.95rem 1rem .95rem 0;border-bottom:1px solid var(--line);vertical-align:top}
+.spec th{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-faint);font-weight:400;border-bottom-color:var(--line-hi)}
+.spec td:first-child{color:var(--white);font-weight:500;width:30%}
+.spec td:nth-child(2){color:var(--ink-dim)}
+.spec td:last-child{font-family:var(--mono);color:var(--charlotte);font-variant-numeric:tabular-nums;
+  white-space:nowrap;text-align:right;padding-right:0;width:1%}
+.spec caption{caption-side:top;text-align:left;padding-bottom:var(--s3);color:var(--ink-dim);font-size:var(--t-small)}
+@media (max-width:720px){
+  .spec thead{display:none}
+  .spec tr{display:grid;grid-template-columns:1fr auto;padding-block:.7rem;border-bottom:1px solid var(--line)}
+  .spec td{border:0;padding:.15rem 0}
+  .spec td:first-child{width:auto}
+  .spec td:nth-child(2){grid-column:1/-1;order:3}
+  .spec td:last-child{width:auto}
+}
+
+/* close */
+.close{min-height:88svh;display:grid;align-content:center}
+.foot{position:relative;z-index:2;background:var(--ground);border-top:1px solid var(--line);
+  padding-block:var(--s6) var(--s5);padding-bottom:calc(var(--s5) + env(safe-area-inset-bottom))}
+.foot__row{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s4);flex-wrap:wrap}
+.foot__seals{display:flex;gap:var(--s3);align-items:center}
+.foot__meta{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s4);
+  padding-top:var(--s4);border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+.foot__meta a{color:var(--charlotte);text-decoration:none;text-underline-offset:4px}
+.foot__meta a:hover{text-decoration:underline}
+
+/* Reveals are class-driven, never tween-driven. A throttled tab, a
+   blocked CDN or a GSAP failure can never leave text invisible. */
+.js .rv{opacity:0;transform:translateY(22px)}
+.js .rv.in{opacity:1;transform:none;
+  transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.js .rv[data-d="1"].in{transition-delay:.06s}
+.js .rv[data-d="2"].in{transition-delay:.12s}
+.js .rv[data-d="3"].in{transition-delay:.18s}
+.js .rv[data-d="4"].in{transition-delay:.24s}
+
+/* hero entrance: CSS only, so it cannot depend on a tween */
+.js .hero__copy>*,.js .hero__strip div{opacity:0;transform:translateY(16px)}
+.js.ready .hero__copy>*,.js.ready .hero__strip div{opacity:1;transform:none;
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js.ready .hero__copy>*:nth-child(2){transition-delay:.08s}
+.js.ready .hero__copy>*:nth-child(3){transition-delay:.16s}
+.js.ready .hero__strip div:nth-child(1){transition-delay:.28s}
+.js.ready .hero__strip div:nth-child(2){transition-delay:.35s}
+.js.ready .hero__strip div:nth-child(3){transition-delay:.42s}
+.js.ready .hero__strip div:nth-child(4){transition-delay:.49s}
+.js #craft{opacity:0} .js.ready #craft{opacity:1;transition:opacity 1.1s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .js .hero__copy>*,.js .hero__strip div{opacity:1!important;transform:none!important}
+  .js .rv{opacity:1!important;transform:none!important}
+  .js #craft{opacity:1!important}
+  #craft{position:relative;height:auto;padding-block:var(--s5)}
+  #craft-photo{display:none}
+  #craft-schem{opacity:1!important}
+  .act__track{height:auto!important}
+  .act__stage{position:static!important;height:auto!important;grid-template-columns:1fr;padding-block:var(--s5)}
+  .cal{min-height:0}
+  .cal__item{position:static;opacity:1!important;transform:none!important;pointer-events:auto;
+    padding-block:var(--s4);border-top:1px solid var(--line)}
+  .cal__list{display:block}
+  .rail{display:none}
+  .scan{opacity:.45!important}
+  .gates li::before{width:100%}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="prog" aria-hidden="true"></div>
+
+<div class="env" aria-hidden="true">
+  <div id="key"></div><div id="grid"></div><div class="vig"></div>
+</div>
+
+<!-- ONE aircraft for the whole film. Never re-mounted. -->
+<div id="craft" aria-hidden="true">
+  <div id="craft-inner">
+    <div id="craft-photo">
+      <img id="hero-img" src="assets/drone-hero-1400.png"
+           srcset="assets/drone-hero-900.png 900w, assets/drone-hero-1400.png 1400w, assets/drone-hero.png 2100w"
+           sizes="(max-width:900px) 92vw, 60vw" width="2100" height="1075"
+           alt="The VAJRON autonomous inspection aircraft in three-quarter view.">
+    </div>
+    <div id="craft-schem">
+      <svg viewBox="0 0 1000 780">
+        <g id="scans">
+          <g class="scan" id="scan-omni">
+            <circle class="scan-fill" cx="500" cy="313" r="300"/>
+            <circle class="scan-line" cx="500" cy="313" r="300" opacity=".55"/>
+            <circle class="scan-line" cx="500" cy="313" r="205" opacity=".3"/>
+            <circle class="scan-line" cx="500" cy="313" r="112" opacity=".18"/>
+            <g id="omni-sweep">
+              <path d="M500 313 L800 313 A300 300 0 0 0 712 101 Z" fill="rgba(190,243,250,.12)"/>
+              <line class="scan-hi" x1="500" y1="313" x2="800" y2="313"/>
+            </g>
+          </g>
+          <g class="scan" id="scan-front">
+            <path class="scan-fill" d="M500 239 L80 65 A452 452 0 0 0 80 413 Z" transform="rotate(90 500 239)"/>
+            <path class="scan-line" d="M500 239 L80 65 M500 239 L80 413" transform="rotate(90 500 239)" opacity=".6"/>
+          </g>
+          <g class="scan" id="scan-up">
+            <path class="scan-fill" d="M468 128 L424 -260 L576 -260 L532 128 Z"/>
+            <line class="scan-hi" x1="500" y1="128" x2="500" y2="-260" stroke-dasharray="10 12"/>
+          </g>
+          <g class="scan" id="scan-down">
+            <path class="scan-fill" d="M478 452 L450 748 L550 748 L522 452 Z"/>
+            <line class="scan-hi" x1="500" y1="452" x2="500" y2="750" stroke-dasharray="8 10"/>
+            <line class="scan-hi" x1="426" y1="750" x2="574" y2="750" opacity=".85"/>
+          </g>
+          <g class="scan" id="scan-gimbal">
+            <circle class="scan-line" cx="500" cy="392" r="120" opacity=".45"/>
+            <circle class="scan-hi" cx="500" cy="392" r="86" stroke-dasharray="5 9"/>
+            <path class="scan-hi" d="M500 258 v32 M500 494 v32 M366 392 h32 M602 392 h32"/>
+          </g>
+          <g class="scan" id="scan-rtk">
+            <path class="scan-line" d="M500 44 C 296 -44 192 40 182 152" opacity=".5"/>
+            <path class="scan-line" d="M500 44 C 704 -44 808 40 818 152" opacity=".5"/>
+            <path class="scan-line" d="M500 44 C 456 -96 544 -128 648 -102" opacity=".5"/>
+            <circle cx="182" cy="152" r="7" fill="#BEF3FA"/>
+            <circle cx="818" cy="152" r="7" fill="#BEF3FA"/>
+            <circle cx="648" cy="-102" r="7" fill="#BEF3FA"/>
+          </g>
+          <g class="scan" id="scan-batt">
+            <path class="scan-hi" d="M420 358 h-96 M580 358 h96" stroke-dasharray="7 7"/>
+            <path class="scan-line" d="M324 330 v172 M676 330 v172" opacity=".55"/>
+          </g>
+        </g>
+
+        <g opacity=".32">
+          <ellipse class="sk-prop" cx="268" cy="300" rx="150" ry="7"/>
+          <ellipse class="sk-prop" cx="732" cy="300" rx="150" ry="7"/>
+        </g>
+        <g id="p-arms">
+          <rect class="sk-fill" x="176" y="240" width="220" height="16" rx="8"/>
+          <rect class="sk-fill" x="604" y="240" width="220" height="16" rx="8"/>
+          <rect class="sk-fill-2" x="150" y="218" width="52" height="34" rx="7"/>
+          <rect class="sk-fill-2" x="798" y="218" width="52" height="34" rx="7"/>
+          <rect class="sk-collar" x="150" y="248" width="52" height="11" rx="4"/>
+          <rect class="sk-collar" x="798" y="248" width="52" height="11" rx="4"/>
+          <ellipse class="sk-prop" cx="176" cy="212" rx="168" ry="8"/>
+          <ellipse class="sk-prop" cx="824" cy="212" rx="168" ry="8"/>
+        </g>
+        <g class="part" id="p-gear">
+          <path class="sk-stroke" d="M430 330 C 404 420 372 520 356 626" stroke-width="9"/>
+          <path class="sk-stroke" d="M570 330 C 596 420 628 520 644 626" stroke-width="9"/>
+          <ellipse class="sk-fill-2" cx="352" cy="636" rx="26" ry="8"/>
+          <ellipse class="sk-fill-2" cx="648" cy="636" rx="26" ry="8"/>
+        </g>
+        <g class="part" id="p-rtk">
+          <rect class="sk-fill-2" x="488" y="44" width="24" height="50" rx="5"/>
+          <ellipse class="sk-fill-2" cx="500" cy="44" rx="19" ry="8"/>
+          <ellipse class="sk-stroke" cx="500" cy="44" rx="19" ry="8"/>
+        </g>
+        <g class="part" id="p-dome">
+          <path class="sk-fill" d="M408 200 L418 148 L448 110 L500 94 L552 110 L582 148 L592 200 Z"/>
+          <path class="sk-stroke" d="M408 200 L418 148 L448 110 L500 94 L552 110 L582 148 L592 200 Z"/>
+          <path class="sk-thin" d="M448 110 V200 M552 110 V200 M500 94 V200"/>
+        </g>
+        <g class="part" id="p-up">
+          <circle class="sk-fill-2" cx="500" cy="140" r="15"/>
+          <circle class="sk-stroke" cx="500" cy="140" r="15"/>
+          <circle class="sk-fill" cx="500" cy="140" r="7"/>
+          <rect class="sk-fill-2" x="460" y="182" width="80" height="21" rx="5"/>
+          <rect class="sk-stroke" x="460" y="182" width="80" height="21" rx="5"/>
+          <circle class="sk-fill" cx="480" cy="192" r="5"/>
+          <circle class="sk-fill" cx="520" cy="192" r="5"/>
+        </g>
+        <g id="p-body">
+          <rect class="sk-fill" x="390" y="200" width="220" height="96" rx="9"/>
+          <rect class="sk-stroke" x="390" y="200" width="220" height="96" rx="9"/>
+          <path class="sk-thin" d="M390 268 h220"/>
+        </g>
+        <g class="part" id="p-front">
+          <rect class="sk-fill-2" x="466" y="226" width="68" height="26" rx="5"/>
+          <rect class="sk-stroke" x="466" y="226" width="68" height="26" rx="5"/>
+          <circle class="sk-fill" cx="484" cy="239" r="7"/>
+          <circle class="sk-fill" cx="516" cy="239" r="7"/>
+        </g>
+        <g class="part" id="p-omni">
+          <rect class="sk-fill-2" x="450" y="298" width="100" height="30" rx="7"/>
+          <rect class="sk-stroke" x="450" y="298" width="100" height="30" rx="7"/>
+          <path class="sk-thin" d="M450 313 h100"/>
+        </g>
+        <g class="part" id="p-batt">
+          <rect class="sk-fill" x="424" y="330" width="152" height="100" rx="7"/>
+          <rect class="sk-stroke" x="424" y="330" width="152" height="100" rx="7"/>
+          <path class="sk-thin" d="M448 330 v100 M552 330 v100"/>
+        </g>
+        <g class="part" id="p-gimbal">
+          <path class="sk-stroke" d="M462 334 v22 M538 334 v22" stroke-width="7"/>
+          <rect class="sk-fill-2" x="452" y="352" width="96" height="80" rx="11"/>
+          <rect class="sk-stroke" x="452" y="352" width="96" height="80" rx="11"/>
+          <circle class="sk-fill" cx="500" cy="392" r="30"/>
+          <circle class="sk-stroke" cx="500" cy="392" r="30"/>
+          <circle class="sk-fill-2" cx="500" cy="392" r="18"/>
+          <circle class="sk-thin" cx="500" cy="392" r="9"/>
+        </g>
+        <g class="part" id="p-down">
+          <rect class="sk-fill-2" x="474" y="432" width="52" height="22" rx="5"/>
+          <rect class="sk-stroke" x="474" y="432" width="52" height="22" rx="5"/>
+          <circle class="sk-fill" cx="500" cy="443" r="6"/>
+        </g>
+        <path id="leader" fill="none" stroke="#BEF3FA" stroke-width="1.5" opacity="0"/>
+        <circle id="leader-dot" r="4" fill="#BEF3FA" opacity="0"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<header class="nav">
+  <a class="nav__mark" href="#top">
+    <img src="assets/vajron-logo.png" alt="VAJRON" width="472" height="305" style="height:19px;width:auto">
+    <span translate="no">Global Tech</span>
+  </a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#suite">Sensors</a><a href="#flight">Flight</a>
+    <a href="#airframe">Airframe</a><a href="#spec">Specification</a>
+  </nav>
+</header>
+
+<main id="main"><span id="top"></span>
+
+<!-- 01 HERO -->
+<section class="hero wrap scene" aria-labelledby="h1">
+  <div class="hero__copy">
+    <span class="lbl">Autonomous Inspection UAS</span>
+    <h1 id="h1" class="hero__title" style="margin-top:var(--s3)">A drone that knows what it is looking at</h1>
+    <p class="lead" style="margin-top:var(--s3)">Seven perception systems on one carbon fibre airframe, with the analysis running on the aircraft rather than on the ground.</p>
+  </div>
+  <div class="hero__strip">
+    <div><b>30<i>x</i></b><span>Optical zoom</span></div>
+    <div><b>360<i>&deg;</i></b><span>LiDAR coverage</span></div>
+    <div><b>15<i>m</i></b><span>Detection radius</span></div>
+    <div><b>500<i>Hz</i></b><span>Overhead sampling</span></div>
+  </div>
+</section>
+
+<!-- 02 STATEMENT -->
+<section class="scene" style="height:190vh" aria-labelledby="h2a">
+  <div class="pin">
+    <h2 id="h2a" class="stmt">It does not just record.<br><em>It understands, in the air.</em></h2>
+    <p class="body" style="margin-top:var(--s4)">Conventional aircraft capture footage for someone to review later. This one carries an NVIDIA Jetson module and runs the model in flight, so what comes back is a result rather than raw material.</p>
+  </div>
+</section>
+
+<!-- 03 SENSOR SUITE - the act -->
+<section class="scene" id="suite" aria-labelledby="h3a">
+  <div class="wrap" style="padding-block:var(--bay) 0">
+    <span class="lbl">Perception suite</span>
+    <h2 id="h3a" style="font-size:var(--t-h1);margin-top:var(--s3);max-width:18ch">Seven systems, one airframe</h2>
+    <p class="body" style="margin-top:var(--s3)">Each answers one question. What is that. How far away. What is overhead. What is underneath. Where am I, to the centimetre.</p>
+  </div>
+
+  <div id="act-track" style="height:640vh;position:relative">
+    <div class="act__stage">
+      <div class="rail" role="tablist" aria-label="Perception systems" id="rail"></div>
+      <div></div>
+      <div class="cal" id="cal"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 CUT TO LIGHT -->
+<section class="light scene" aria-labelledby="h4a">
+  <div class="wrap bay">
+    <span class="lbl">General arrangement</span>
+    <h2 id="h4a" style="font-size:var(--t-h1);margin-top:var(--s3);max-width:20ch">The same seven, on the aircraft itself</h2>
+    <figure style="margin:var(--s6) 0 0">
+      <img src="assets/component-map.jpg" width="1325" height="800" loading="lazy" decoding="async"
+           alt="Engineering diagram of the airframe labelling the RTK navigation GPS, upward safety LiDAR rangefinder, upward wide-angle vision sensor, omnidirectional 360 degree LiDAR, front wide-angle vision sensor, 3-axis stabilised AI camera, battery tray and downward-facing precision LiDAR.">
+      <figcaption class="cap">Component arrangement, front elevation</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 05 EDGE AI -->
+<section class="scene wrap bay split" aria-labelledby="h5a">
+  <div>
+    <h2 id="h5a" style="font-size:var(--t-h1)">The processing is onboard</h2>
+    <p class="body" style="margin-top:var(--s4)">An NVIDIA Jetson module runs live video analytics on the aircraft. Ground-only processing depends on a continuous video link, and if that link degrades the feed arrives late and the recording can be lost. Running the model in flight removes the dependency.</p>
+    <p class="body dim" style="margin-top:var(--s2)">The same processor fuses LiDAR and camera data for obstacle avoidance, so perception and analysis share one brain. A Linux-based 4G SIM dongle streams results while the aircraft is still flying.</p>
+    <ul class="strip"><li>Trained on 100,000+ images</li><li>95%+ monitoring accuracy</li></ul>
+  </div>
+  <figure style="margin:0">
+    <img src="assets/jetson.jpg" width="900" height="507" loading="lazy" decoding="async"
+         alt="The NVIDIA Jetson compute module carried on the aircraft."
+         style="border:1px solid var(--line)">
+  </figure>
+</section>
+
+<!-- 06 OBSTACLE FUSION -->
+<section class="scene wrap bay" aria-labelledby="h6a">
+  <h2 id="h6a" style="font-size:var(--t-h1);max-width:16ch">What it is, and how far away</h2>
+  <p class="body" style="margin-top:var(--s4)">The camera identifies the object. The LiDAR measures the distance. Fusing the two turns a picture into a map of the flight path. Safety buffers widen dynamically around moving people and vehicles, and stay tight around static walls.</p>
+  <ul class="strip"><li>YOLO vision with 2D LiDAR</li><li>Dynamic safety zones</li><li>Automated pathfinding</li></ul>
+</section>
+
+<!-- 07 FLIGHT -->
+<section class="scene wrap bay" id="flight" aria-labelledby="h7a">
+  <h2 id="h7a" style="font-size:var(--t-h1);max-width:16ch">Select the mission. Step back.</h2>
+  <p class="body" style="margin-top:var(--s4)">Pre-flight verification, take-off, mission execution and return, without pilot input. Weather awareness and risk evaluation run continuously, not only before launch.</p>
+  <ol class="gates" aria-label="Mission phases">
+    <li><span class="gates__n">01</span><h3>Pre-flight verify</h3><p>Full health, calibration, battery and environment check before anything spins.</p></li>
+    <li><span class="gates__n">02</span><h3>Safe take-off</h3><p>Overhead clearance confirmed, gear retracted, camera view unobstructed.</p></li>
+    <li><span class="gates__n">03</span><h3>Obstacle-aware flight</h3><p>Terrain-aware navigation along a repeatable, centimetre-held path.</p></li>
+    <li><span class="gates__n">04</span><h3>Autonomous return</h3><p>Smart return-to-launch triggers on low battery or changing conditions.</p></li>
+  </ol>
+</section>
+
+<!-- 08 INTERLOCKS -->
+<section class="scene wrap bay" aria-labelledby="h8a">
+  <h2 id="h8a" style="font-size:var(--t-h1);max-width:16ch">What it refuses to do</h2>
+  <p class="body" style="margin-top:var(--s4)">Much of the safety case is not what the aircraft does. It is what it declines to do, automatically, before anyone can override it.</p>
+  <div class="lock">
+    <article class="lock__i">
+      <span class="lock__tag">Denied</span>
+      <h3>Rain flight is never permitted</h3>
+      <p>Two independent layers decide. The 4G dongle checks the forecast before take-off, and rain or rising humidity in the mission window raises a warning on the ground station. Any live rain detection denies take-off outright. Onboard temperature and humidity sensors verify conditions independently if network weather data is unavailable.</p>
+    </article>
+    <article class="lock__i">
+      <span class="lock__tag">Locked</span>
+      <h3>The take-off lock</h3>
+      <p>Thin wires and low branches are what a ground operator misses. Top-mounted LiDAR and camera scan 40 m of airspace above the aircraft before it leaves the pad. If an obstacle sits in the clearance zone, take-off is blocked. If take-off is forced anyway, the navigation system intervenes and calculates an angled trajectory to ascend around it.</p>
+    </article>
+    <article class="lock__i">
+      <span class="lock__tag">Blocked</span>
+      <h3>Unsafe launch sites</h3>
+      <p>Launch is refused outright where the site itself is unsuitable, before calibration or battery state come into question.</p>
+    </article>
+  </div>
+</section>
+
+<!-- 09 AIRFRAME -->
+<section class="scene wrap bay split split--rev" id="airframe" aria-labelledby="h9a">
+  <figure style="margin:0">
+    <img src="assets/drone-gps.png" width="1260" height="660" loading="lazy" decoding="async"
+         alt="The aircraft with landing gear deployed and the RTK navigation mast above the airframe.">
+  </figure>
+  <div>
+    <h2 id="h9a" style="font-size:var(--t-h1);max-width:14ch">Carbon fibre, redundant, quick to turn around</h2>
+    <p class="body" style="margin-top:var(--s4)">A modular frame with redundant avionics. The landing gear folds up after take-off and deploys before landing, keeping the legs out of frame for a clear 360&deg; line of sight, cutting drag in forward flight and improving range and stability.</p>
+    <p class="body dim" style="margin-top:var(--s2)">The power pack sits inside the structure rather than strapped to it, in an IP54 enclosure with cell balancing and live voltage telemetry. A full swap takes under two minutes, so the aircraft turns around in the field.</p>
+    <ul class="strip"><li>Retractable gear</li><li>IP54 tray</li><li>Under 2 min swap</li></ul>
+  </div>
+</section>
+
+<!-- 10 SPECIFICATION -->
+<section class="scene spec wrap bay" id="spec" aria-labelledby="h10a">
+  <h2 id="h10a" style="font-size:var(--t-h1)">Specification</h2>
+  <table style="margin-top:var(--s5)">
+    <caption>Every figure on this page, on one screen.</caption>
+    <thead><tr><th scope="col">System</th><th scope="col">Function</th><th scope="col">Figure</th></tr></thead>
+    <tbody>
+      <tr><td>3-Axis Stabilized AI Camera</td><td>Primary visual perception. 4K sensor on an active gimbal with real-time target lock.</td><td>30x zoom</td></tr>
+      <tr><td>Omnidirectional LiDAR</td><td>Continuous full horizontal scanning, unaffected by lighting, glare or night operations.</td><td>360&deg; / 15 m</td></tr>
+      <tr><td>Front Wide-Angle Vision</td><td>Forward optical awareness, zero-latency detection, GPS-denied redundancy.</td><td>120&deg; FOV</td></tr>
+      <tr><td>Upward Safety LiDAR</td><td>Ceiling and overhead guard. Verifies vertical airspace before launch.</td><td>500 Hz</td></tr>
+      <tr><td>Upward detection range</td><td>Prevents top-side strikes under bridges or foliage.</td><td>0.2-20 m</td></tr>
+      <tr><td>Top-mounted hazard scan</td><td>Scans airspace above for trees or thin wires before launch.</td><td>40 m</td></tr>
+      <tr><td>Downward Precision LiDAR</td><td>Exact AGL profiling and landing-zone slope analysis, whatever the surface reflects.</td><td>Millimetre</td></tr>
+      <tr><td>RTK Navigation GPS</td><td>Differential corrections across GPS, GLONASS, Galileo and BeiDou.</td><td>Centimetre</td></tr>
+      <tr><td>Protected Battery Tray</td><td>Rated enclosure with cell balancing and real-time voltage telemetry.</td><td>IP54</td></tr>
+      <tr><td>Battery exchange</td><td>Quick-swap mechanism, fast-charge ready.</td><td>&lt; 2 min</td></tr>
+      <tr><td>Onboard Edge AI</td><td>NVIDIA Jetson running live analytics on the aircraft.</td><td>95%+ accuracy</td></tr>
+      <tr><td>Training set</td><td>Model trained ahead of deployment.</td><td>100,000+ images</td></tr>
+      <tr><td>Airframe</td><td>Modular carbon fibre structure with redundant avionics and retractable gear.</td><td>Carbon fibre</td></tr>
+      <tr><td>Connectivity</td><td>Linux-compatible 4G SIM dongle for live telemetry and weather checks.</td><td>4G</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 11 CLOSE -->
+<section class="scene close wrap" aria-labelledby="h11a">
+  <h2 id="h11a" class="stmt" style="max-width:16ch">One button to operate.<br>Everything else is automatic.</h2>
+  <p class="lead" style="margin-top:var(--s4)">Built for use by untrained or minimally trained personnel, with enterprise-grade safety and precision.</p>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__row">
+      <div>
+        <img src="assets/vajron-logo.png" width="472" height="305" alt="VAJRON Global Tech" style="height:30px;width:auto">
+        <p class="mono" style="font-size:var(--t-micro);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:var(--s2)">VAJRON Global Tech Pvt. Ltd.</p>
+      </div>
+      <div class="foot__seals">
+        <img src="assets/seal-dda.png" width="300" height="421" loading="lazy" alt="Delhi Development Authority" style="height:54px;width:auto">
+        <img src="assets/seal-ddagreens.png" width="400" height="382" loading="lazy" alt="DDA Greens" style="height:54px;width:auto">
+      </div>
+    </div>
+    <div class="foot__meta">
+      <a href="https://www.vajronglobaltech.com" rel="noopener">www.vajronglobaltech.com</a>
+      <span>Engineering the future of autonomous technologies</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* Every figure below traces to the VAJRON deck. Nothing invented.
+     ax/ay are anchor coordinates in the schematic's own 1000x780
+     viewBox, so a leader line can never drift off its part.        */
+  var STOPS = [
+    { id:'p-gimbal', scan:'scan-gimbal', ax:500, ay:392,
+      title:'3-Axis Stabilized AI Camera',
+      sub:'The payload that does the looking. Continuous optical zoom on a 4K sensor, held steady by a three-axis active gimbal that compensates for vibration and wind.',
+      num:'30', unit:'x', nl:'Continuous optical zoom',
+      list:['4K Ultra HD sensor','Real-time target lock','Jitter-free at standoff distance'] },
+    { id:'p-omni', scan:'scan-omni', ax:500, ay:313,
+      title:'Omnidirectional 360&deg; LiDAR',
+      sub:'A continuous bubble around the aircraft, scanned in every direction at once. It does not depend on light, so glare and night operations change nothing.',
+      num:'15', unit:'m', nl:'Active detection radius',
+      list:['360&deg; environmental mapping','All-weather reliability','Electronic collision-prevention bubble'] },
+    { id:'p-front', scan:'scan-front', ax:500, ay:239,
+      title:'Front Wide-Angle Vision Sensor',
+      sub:'Forward optical awareness that works out where an obstacle will be, not only where it is. It re-routes around wires, trees and structures as they appear.',
+      num:'120', unit:'&deg;', nl:'Forward field of view',
+      list:['AI-driven forward perception','Zero-latency detection at speed','GPS-denied redundancy'] },
+    { id:'p-up', scan:'scan-up', ax:500, ay:140,
+      title:'Upward Safety LiDAR Rangefinder',
+      sub:'The airspace above the aircraft is the part an operator cannot see. A rangefinder and a wide-angle vision sensor share the top housing, so overhead hazards are read by laser and by camera.',
+      num:'500', unit:'Hz', nl:'Sampling rate, 0.2 m to 20 m',
+      list:['Long-range overhead scanning','Automated safe-takeoff clearance','Caps climb altitude near obstacles'] },
+    { id:'p-down', scan:'scan-down', ax:500, ay:443,
+      title:'Downward Precision LiDAR',
+      sub:'Height above ground measured to the millimetre, and read correctly whatever the surface reflects. It checks the landing zone for slope, roughness and debris before committing.',
+      num:'mm', unit:'', nl:'Landing precision',
+      list:['Exact AGL distance profiling','Ground terrain analysis','Terrain-following capability'] },
+    { id:'p-rtk', scan:'scan-rtk', ax:500, ay:44,
+      title:'Advanced RTK Navigation GPS',
+      sub:'Differential corrections from the ground station hold the aircraft to centimetre accuracy during hover and mission flight, with near-zero drift between passes.',
+      num:'cm', unit:'', nl:'Positional accuracy',
+      list:['GPS, GLONASS, Galileo, BeiDou','Centimetre-accurate tracking','Repeatable waypoint execution'] },
+    { id:'p-batt', scan:'scan-batt', ax:500, ay:380,
+      title:'Protected Battery Tray',
+      sub:'The power pack sits inside the structure, not strapped to it. The enclosure shields it from impact, heat and ingress, and a full swap takes under two minutes.',
+      num:'IP54', unit:'', nl:'Rated enclosure',
+      list:['Quick-swap mechanism','Integrated charging and BMS','Cell balancing with live voltage telemetry'] }
+  ];
+
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cal = document.getElementById('cal'), rail = document.getElementById('rail');
+
+  STOPS.forEach(function(s,i){
+    var n = String(i+1).padStart(2,'0');
+    var a = document.createElement('article');
+    a.className = 'cal__item' + (i===0?' on':'');
+    a.id = 'cal-'+i;
+    a.innerHTML =
+      '<p class="cal__ix"><b>'+n+'</b> / 07</p>'+
+      '<h3 class="cal__title">'+s.title+'</h3>'+
+      '<p class="cal__sub">'+s.sub+'</p>'+
+      '<p class="cal__num">'+s.num+(s.unit?'<i>'+s.unit+'</i>':'')+'</p>'+
+      '<p class="cal__nl">'+s.nl+'</p>'+
+      '<ul class="cal__list">'+s.list.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';
+    cal.appendChild(a);
+
+    var b = document.createElement('button');
+    b.type='button';
+    b.setAttribute('aria-current', i===0?'true':'false');
+    b.setAttribute('aria-label','Go to '+s.title.replace(/&deg;/g,' degree')+', system '+n+' of 07');
+    b.addEventListener('click', function(){ goTo(i); });
+    rail.appendChild(b);
+  });
+
+  var items = [].slice.call(cal.children),
+      ticks = [].slice.call(rail.children),
+      leader = document.getElementById('leader'),
+      ldot = document.getElementById('leader-dot'),
+      track = document.getElementById('act-track'),
+      cur = -1;
+
+  function setStop(i){
+    if (i===cur) return;
+    cur = i;
+    STOPS.forEach(function(s,k){
+      var p = document.getElementById(s.id), sc = document.getElementById(s.scan);
+      if (p) p.classList.toggle('on', k===i);
+      if (sc) sc.style.opacity = (k===i) ? '1' : '0';
+      items[k].classList.toggle('on', k===i);
+      ticks[k].setAttribute('aria-current', k===i?'true':'false');
+    });
+    draw(STOPS[i]);
+  }
+
+  function draw(s){
+    var ex = 1120, mx = s.ax + 210;
+    leader.setAttribute('d','M'+s.ax+' '+s.ay+' L'+mx+' '+s.ay+' L'+ex+' '+(s.ay-52));
+    ldot.setAttribute('cx', s.ax); ldot.setAttribute('cy', s.ay);
+    if (!reduce && window.gsap){
+      var len = leader.getTotalLength();
+      gsap.fromTo(leader,{opacity:1,strokeDasharray:len,strokeDashoffset:len},
+        {strokeDashoffset:0,duration:.6,ease:'power2.out'});
+      gsap.fromTo(ldot,{opacity:0,scale:.2,transformOrigin:'center'},
+        {opacity:1,scale:1,duration:.4,ease:'back.out(2)'});
+    } else { leader.setAttribute('opacity','1'); ldot.setAttribute('opacity','1'); }
+  }
+
+  function goTo(i){
+    var st = window.ScrollTrigger && ScrollTrigger.getById('act');
+    if (!st || reduce){ items[i].scrollIntoView({block:'center'}); return; }
+    scrollTo({ top: st.start + (st.end-st.start) * ((i+0.5)/STOPS.length), behavior:'smooth' });
+  }
+
+  setStop(0);
+  requestAnimationFrame(function(){ document.documentElement.classList.add('ready'); });
+  setTimeout(function(){ document.documentElement.classList.add('ready'); }, 500);
+
+  /* ---- reveals: IntersectionObserver, not tweens ---- */
+  var revealables = [].slice.call(document.querySelectorAll(
+    'section h2, section > .wrap > h2, .lock__i, .gates li, .spec tbody tr, .strip, figure'));
+  revealables.forEach(function(el,i){ el.classList.add('rv'); el.dataset.d = String(i % 5); });
+
+  function showAll(){ revealables.forEach(function(el){ el.classList.add('in'); }); }
+
+  if (reduce || !('IntersectionObserver' in window)){
+    showAll();
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        if (e.target.classList.contains('gates') || e.target.tagName === 'LI') {
+          e.target.classList.add('on');
+        }
+        io.unobserve(e.target);
+      });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:.12 });
+    revealables.forEach(function(el){ io.observe(el); });
+    /* belt and braces: nothing stays hidden past 6s no matter what */
+    setTimeout(showAll, 6000);
+  }
+
+  if (!(window.gsap && window.ScrollTrigger) || reduce) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  var inner = document.getElementById('craft-inner');
+
+  /* ============ THE CAMERA MOVE ============
+     One continuous timeline across hero -> statement -> the act.
+     The aircraft never re-mounts; only the camera changes.        */
+  var film = gsap.timeline({
+    scrollTrigger:{
+      trigger:'#main', start:'top top',
+      endTrigger:'#act-track', end:'top top',
+      scrub:1
+    }
+  });
+  film
+    /* hero framing: sits right of the copy */
+    .fromTo(inner, { xPercent:26, yPercent:2, scale:1, rotate:0 },
+                   { xPercent:22, yPercent:-1, scale:1.02, rotate:-1, ease:'none' }, 0)
+    /* the statement: it drifts centre and recedes behind the type */
+    .to(inner, { xPercent:6, yPercent:4, scale:.92, rotate:1.5, ease:'none' }, .34)
+    .to('#craft-photo', { opacity:.42, ease:'none' }, .34)
+    /* arriving at the act: the photograph becomes its own schematic */
+    .to(inner, { xPercent:-22, yPercent:0, scale:1.04, rotate:0, ease:'none' }, .72)
+    .to('#craft-photo', { opacity:0, ease:'none' }, .78)
+    .to('#craft-schem', { opacity:1, ease:'none' }, .80);
+
+  /* the act itself: stops with a long hold in the middle of each */
+  ScrollTrigger.create({
+    id:'act', trigger:track, start:'top top', end:'bottom bottom',
+    onUpdate:function(self){
+      setStop(Math.min(STOPS.length-1, Math.floor(self.progress * STOPS.length)));
+    }
+  });
+
+  /* Release the aircraft once the act is done.
+     immediateRender:false matters: without it this tween samples the
+     craft's opacity at build time (still 0, before the CSS reveal class
+     lands) and pins it there inline, hiding the aircraft for good. */
+  gsap.fromTo('#craft', { opacity:1 }, {
+    opacity:0, ease:'none', immediateRender:false,
+    scrollTrigger:{ trigger:track, start:'bottom-=45% bottom', end:'bottom bottom', scrub:.6 }});
+
+  /* environment drift */
+  gsap.to('#key',{ yPercent:10, scale:1.2, ease:'none',
+    scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:1.2 }});
+  gsap.to('#grid',{ yPercent:-7, ease:'none',
+    scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:1.4 }});
+
+  /* reading progress */
+  gsap.to('#prog',{ scaleX:1, ease:'none',
+    scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:.3 }});
+
+
+  /* the one perpetual motion on the page: a 360 degree LiDAR sweeps. */
+  gsap.to('#omni-sweep',{ rotation:360, transformOrigin:'500px 313px', duration:7, repeat:-1, ease:'none' });
+
+  /* nav reflects position */
+  [].slice.call(document.querySelectorAll('.nav__links a')).forEach(function(a){
+    var sec = document.querySelector(a.getAttribute('href'));
+    if (!sec) return;
+    ScrollTrigger.create({ trigger:sec, start:'top 45%', end:'bottom 45%',
+      onToggle:function(s){ a.style.color = s.isActive ? 'var(--charlotte)' : ''; }});
+  });
+
+  rail.addEventListener('keydown', function(e){
+    var i = ticks.indexOf(document.activeElement); if (i<0) return;
+    if (e.key==='ArrowDown'||e.key==='ArrowRight'){ e.preventDefault(); ticks[Math.min(ticks.length-1,i+1)].focus(); }
+    if (e.key==='ArrowUp'||e.key==='ArrowLeft'){ e.preventDefault(); ticks[Math.max(0,i-1)].focus(); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Local working material, not for a public repo
+.brief/
+.claude/
+.DS_Store
+.vercel/
