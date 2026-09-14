@@ -41,21 +41,21 @@
   --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 
-  --t-mega:clamp(2.6rem,1rem + 5.4vw,5.6rem);
-  --t-h1:clamp(2.35rem,1.1rem + 4vw,4.9rem);
-  --t-h2:clamp(1.8rem,1.15rem + 2.5vw,3.2rem);
-  --t-h3:clamp(1.2rem,1.05rem + .7vw,1.6rem);
-  --t-num:clamp(2.8rem,1.4rem + 5.4vw,6rem);
-  --t-lead:clamp(1.1rem,1rem + .7vw,1.45rem);
-  --t-body:clamp(1rem,.96rem + .22vw,1.13rem);
-  --t-small:.97rem; --t-label:.7rem; --t-micro:.64rem;
+  --t-mega:clamp(2.1rem,.9rem + 3.7vw,4rem);
+  --t-h1:clamp(1.85rem,.95rem + 2.9vw,3.35rem);
+  --t-h2:clamp(1.45rem,1rem + 1.7vw,2.2rem);
+  --t-h3:clamp(1.05rem,1rem + .45vw,1.3rem);
+  --t-num:clamp(2.1rem,1.2rem + 3.3vw,3.7rem);
+  --t-lead:clamp(1rem,.95rem + .42vw,1.18rem);
+  --t-body:clamp(.92rem,.9rem + .16vw,1rem);
+  --t-small:.88rem; --t-label:.66rem; --t-micro:.6rem;
 
   /* tight for display, normal for reading, wide for small caps */
   --tr-display:-.032em; --tr-tighter:-.042em; --tr-label:.22em;
   --lh-display:.96; --lh-body:1.72;
 
-  --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2rem; --s5:3rem; --s6:4.5rem;
-  --bay:clamp(4.5rem,2.5rem + 7vw,9rem);
+  --s1:.45rem; --s2:.85rem; --s3:1.25rem; --s4:1.7rem; --s5:2.5rem; --s6:3.6rem;
+  --bay:clamp(3.4rem,2rem + 4.4vw,6.4rem);
   --pad:clamp(1.25rem,.5rem + 3vw,4.5rem);
   --maxw:1380px;
   --ease:cubic-bezier(.22,1,.36,1);
@@ -193,8 +193,8 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .act__stage{position:sticky;top:0;height:100svh;display:grid;
   grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;
   max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:76px}
-.cal{position:relative;min-height:450px;z-index:2}
-.cal__item{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(14px)}
+.cal{position:relative;display:grid;z-index:2}
+.cal__item{grid-area:1/1;opacity:0;pointer-events:none;transform:translateY(14px)}
 .cal__item.on{opacity:1;pointer-events:auto;transform:none;
   transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .cal__ix{font-family:var(--mono);font-weight:500;font-size:var(--t-label);letter-spacing:var(--tr-label);color:var(--ink-faint)}
@@ -220,23 +220,30 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 @media (max-width:1200px){.rail{display:none}}
 @media (max-width:900px){
   .act__stage{grid-template-columns:1fr;align-content:end;padding-top:96px;padding-bottom:var(--s5)}
-  .cal{min-height:310px}
   .cal__list{display:none}
 }
+/* A short window is not a small window, and it is not always a narrow
+   one: these fire on height alone so a wide, short window is covered too.
+   The supplementary bullets go first, since the specification table
+   carries the same facts in full. */
+@media (max-height:620px){
+  .cal__list{display:none}
+}
+@media (max-height:760px){
+  .cal__num{margin:var(--s3) 0 .2rem}
+  .cal__title{margin:var(--s2) 0 .5rem}
+}
+
 /* A short window is not a small window. The act has to fit a pinned
    viewport, so when height runs out the craft and the callout both
    come down a step rather than the craft sliding off the top. */
 @media (max-width:900px) and (max-height:720px){
   #craft-inner{width:min(62vw,300px)}
   .act__stage{padding-top:76px;padding-bottom:var(--s4)}
-  .cal{min-height:236px}
-  .cal__title{font-size:clamp(1.25rem,1rem + 1.9vw,1.75rem);margin:var(--s2) 0 .55rem}
-  .cal__sub{font-size:.95rem;line-height:1.5;max-width:40ch}
-  .cal__num{font-size:clamp(2rem,1.2rem + 3.4vw,3.1rem);margin:var(--s3) 0 .2rem}
+  .cal__sub{line-height:1.5;max-width:40ch}
 }
 @media (max-width:900px) and (max-height:560px){
   .cal__sub{display:none}
-  .cal{min-height:170px}
 }
 /* The hero has the same squeeze: a fixed craft cannot flow out of the
    way, so on a short window the copy comes down to leave it a band. */
@@ -341,20 +348,56 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
 /* close */
 .close{min-height:88svh;display:grid;align-content:center}
-.foot{position:relative;z-index:2;background:var(--ground);border-top:1px solid var(--line);
-  padding-block:var(--s6) var(--s5);padding-bottom:calc(var(--s5) + env(safe-area-inset-bottom))}
-.foot__row{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s4);flex-wrap:wrap}
-.foot__seals{display:flex;gap:var(--s3);align-items:center}
-.foot__meta{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s4);
-  padding-top:var(--s4);border-top:1px solid var(--line);
-  font-family:var(--mono);font-size:var(--t-micro);letter-spacing:var(--tr-label);
+.foot{position:relative;z-index:2;margin-top:var(--s6);
+  border-top:1px solid var(--line);border-top-left-radius:2rem;border-top-right-radius:2rem;
+  background:var(--ground);
+  padding:var(--s6) 0 calc(var(--s5) + env(safe-area-inset-bottom))}
+.foot::before{content:"";position:absolute;inset:0;pointer-events:none;
+  border-top-left-radius:inherit;border-top-right-radius:inherit;
+  background:radial-gradient(35% 128px at 50% 0%,rgba(153,193,231,.14),transparent)}
+.foot__glow{position:absolute;top:0;left:50%;height:1px;width:50%;
+  transform:translate(-50%,-50%);border-radius:9999px;
+  background:rgba(190,243,250,.32);filter:blur(4px)}
+@media (min-width:768px){.foot{border-top-left-radius:4rem;border-top-right-radius:4rem}}
+
+.foot__grid{display:grid;gap:var(--s5);position:relative}
+@media (min-width:1024px){.foot__grid{grid-template-columns:2fr 1fr 1.5fr;gap:var(--s6)}}
+
+.foot__brand{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3)}
+.foot__tagline{font-family:var(--serif);font-size:var(--t-small);line-height:1.6;
+  color:var(--ink-dim);max-width:34ch}
+.foot__est{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:var(--tr-label);
   text-transform:uppercase;color:var(--ink-faint)}
-.foot__meta a{color:var(--oasis);text-decoration:none;text-underline-offset:4px}
-.foot__meta a:hover{text-decoration:underline}
+
+.foot__label{font-family:var(--mono);font-weight:500;font-size:var(--t-micro);
+  letter-spacing:var(--tr-label);text-transform:uppercase;color:var(--ink-faint);margin-bottom:var(--s3)}
+.foot__list{display:flex;flex-direction:column;gap:.45rem}
+.foot__list a{font-family:var(--serif);font-size:var(--t-small);color:var(--ink);
+  text-decoration:none;width:fit-content;transition:color 300ms var(--ease)}
+.foot__list a:hover{color:var(--white)}
+.foot__url{font-family:var(--mono);font-size:var(--t-small);color:var(--oasis);
+  text-decoration:none;text-underline-offset:4px;transition:color 300ms var(--ease)}
+.foot__url:hover{text-decoration:underline}
+
+.foot__seals{display:flex;gap:var(--s3);align-items:center;margin-top:var(--s4)}
+/* dock-scale on hover, pure CSS, neighbours ease out from the hovered mark */
+.foot__seal{will-change:transform;display:inline-flex;
+  transition:transform .6s cubic-bezier(.25,2.5,.3,1)}
+.foot__seal:hover{transform:scale(1.14)}
+.foot__seal:hover + .foot__seal{transform:scale(1.06)}
+.foot__seal:has(+ .foot__seal:hover){transform:scale(1.06)}
+
+/* Reveal is driven by the page's observer, not a bare keyframe, so the
+   footer cannot be left invisible if the animation never runs. */
+.js .foot__grid > *.rv{filter:blur(4px)}
+.js .foot__grid > *.rv.in{filter:none;transition:opacity .8s var(--ease),
+  transform .8s var(--ease),filter .8s var(--ease)}
 
 /* Reveals are class-driven, never tween-driven. A throttled tab, a
    blocked CDN or a GSAP failure can never leave text invisible. */
 .js .rv{opacity:0;transform:translateY(22px)}
+.reveal-all .rv{opacity:1!important;transform:none!important;filter:none!important;
+  transition:none!important}
 .js .rv.in{opacity:1;transform:none;
   transition:opacity .85s var(--ease),transform .85s var(--ease)}
 .js .rv[data-d="1"].in{transition-delay:.06s}
@@ -386,7 +429,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   .act__track{height:auto!important}
   .act__stage{position:static!important;height:auto!important;grid-template-columns:1fr;padding-block:var(--s5)}
   .cal{min-height:0}
-  .cal__item{position:static;opacity:1!important;transform:none!important;pointer-events:auto;
+  .cal__item{grid-area:auto;opacity:1!important;transform:none!important;pointer-events:auto;
     padding-block:var(--s4);border-top:1px solid var(--line)}
   .cal__list{display:block}
   .rail{display:none}
@@ -708,17 +751,38 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 </main>
 
 <footer class="foot">
+  <div class="foot__glow" aria-hidden="true"></div>
   <div class="wrap">
-    <div class="foot__row">
-      <div>
-        <img src="assets/vajron-logo-light-v3.png" width="720" height="455" alt="VAJRON Global Tech Pvt. Ltd." style="height:64px;width:auto">
-        
+    <div class="foot__grid">
+
+      <div class="foot__brand">
+        <img src="assets/vajron-logo-light-v3.png" width="720" height="455"
+             alt="VAJRON Global Tech Pvt. Ltd." style="height:64px;width:auto">
+        <p class="foot__tagline">Engineering the future of autonomous technologies.</p>
+        <p class="foot__est">VAJRON Global Tech Pvt. Ltd.</p>
       </div>
 
-    </div>
-    <div class="foot__meta">
-      <a href="https://www.vajronglobaltech.com" rel="noopener">www.vajronglobaltech.com</a>
-      <span>Engineering the future of autonomous technologies</span>
+      <nav class="foot__col" aria-labelledby="foot-sections">
+        <h2 class="foot__label" id="foot-sections">Sections</h2>
+        <div class="foot__list">
+          <a href="#suite">Sensor suite</a>
+          <a href="#flight">Flight</a>
+          <a href="#airframe">Airframe</a>
+          <a href="#spec">Specification</a>
+        </div>
+      </nav>
+
+      <div class="foot__col">
+        <h2 class="foot__label">Contact</h2>
+        <a class="foot__url" href="https://www.vajronglobaltech.com" rel="noopener">www.vajronglobaltech.com</a>
+        <div class="foot__seals">
+          <span class="foot__seal"><img src="assets/seal-dda.png" width="300" height="421" loading="lazy"
+                alt="Delhi Development Authority" style="height:54px;width:auto"></span>
+          <span class="foot__seal"><img src="assets/seal-ddagreens.png" width="400" height="382" loading="lazy"
+                alt="DDA Greens" style="height:54px;width:auto"></span>
+        </div>
+      </div>
+
     </div>
   </div>
 </footer>
@@ -1052,10 +1116,16 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
   /* ---- reveals: IntersectionObserver, not tweens ---- */
   var revealables = [].slice.call(document.querySelectorAll(
-    'section h2, section > .wrap > h2, .lock__i, .gates li, .spec tbody tr, .strip, figure'));
+    'section h2, section > .wrap > h2, .lock__i, .gates li, .spec tbody tr, .strip, figure, .foot__grid > *'));
   revealables.forEach(function(el,i){ el.classList.add('rv'); el.dataset.d = String(i % 5); });
 
-  function showAll(){ revealables.forEach(function(el){ el.classList.add('in'); }); }
+  /* The failsafe must not depend on a transition: a backgrounded tab
+     freezes transitions too, so adding .in alone can leave content stuck
+     part-way. This forces the resting state outright. */
+  function showAll(){
+    document.documentElement.classList.add('reveal-all');
+    revealables.forEach(function(el){ el.classList.add('in'); });
+  }
 
   if (reduce || !('IntersectionObserver' in window)){
     showAll();
