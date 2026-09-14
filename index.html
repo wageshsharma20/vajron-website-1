@@ -251,9 +251,9 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
    viewport, so when height runs out the craft and the callout both
    come down a step rather than the craft sliding off the top. */
 @media (max-width:900px) and (max-height:720px){
-  #craft-inner{width:min(88vw,440px)}
+  #craft-inner{width:min(86vw,348px)}
   .act__stage{padding-top:76px;padding-bottom:var(--s4)}
-  .cal__sub{line-height:1.5;max-width:40ch}
+  .cal__sub{font-size:.88rem;line-height:1.5;max-width:42ch}
 }
 @media (max-width:900px) and (max-height:560px){
   .cal__sub{display:none}
@@ -1173,7 +1173,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
        tall phone throws it off the top of a short window. Shorter window,
        smaller craft, smaller lift. */
     .add('(max-width: 900px) and (max-height: 720px)', function(){
-      buildFilm(0, 0, 0, 0, .86, .88, .80, .96, -44, -47, -55, -46); });
+      buildFilm(0, 0, 0, 0, .70, .72, .68, .96, -40, -43, -50, -33); });
 
   function buildFilm(x0, x1, x2, x3, s0, s1, s2, s3, y0, y1, y2, y3){
     var film = gsap.timeline({
