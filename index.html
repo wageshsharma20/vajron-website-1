@@ -34,7 +34,7 @@
   --mariner:#267AD3; --corn:#99C1E7; --oasis:#FDEFC9; --torch:#FE251E;
   --white:#FFF;
   --ink:rgba(253,239,201,.86); --ink-dim:rgba(253,239,201,.64); --ink-faint:rgba(253,239,201,.40);
-  --line:rgba(153,193,231,.16); --line-hi:rgba(153,193,231,.34);
+  --line:rgba(253,239,201,.17); --line-hi:rgba(253,239,201,.34);
 
   --display:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -72,20 +72,20 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .body+.body{margin-top:var(--s2)}
 .dim{color:var(--ink-dim)}
 .lbl{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.18em;
-  text-transform:uppercase;color:var(--corn);display:block}
-.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--corn);color:var(--void);
+  text-transform:uppercase;color:var(--oasis);display:block}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--oasis);color:var(--void);
   padding:.7rem 1.1rem;font-family:var(--mono);font-size:var(--t-label);text-decoration:none}
 .skip:focus{left:1rem;top:1rem}
 
 /* ---------- fixed environment ---------- */
 .env{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#key{position:absolute;left:50%;top:46%;width:150vmax;aspect-ratio:1;margin:-75vmax 0 0 -75vmax;
-  border-radius:50%;will-change:transform,opacity;
-  background:radial-gradient(circle,rgba(38,122,211,.36) 0%,rgba(38,122,211,.13) 32%,rgba(7,19,36,0) 66%);
-  filter:blur(46px)}
+/* The wave field. A single WebGL canvas; if the context is unavailable it
+   hides itself and the navy ground below carries the page unchanged. */
+#shader{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.55}
+.scrim{position:absolute;inset:0;background:rgba(7,19,36,.52)}
 #grid{position:absolute;inset:-6%;will-change:transform;
-  background-image:linear-gradient(to right,rgba(153,193,231,.06) 1px,transparent 1px),
-                   linear-gradient(to bottom,rgba(153,193,231,.06) 1px,transparent 1px);
+  background-image:linear-gradient(to right,rgba(253,239,201,.05) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(253,239,201,.05) 1px,transparent 1px);
   background-size:96px 96px;
   -webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%);
   mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%)}
@@ -115,7 +115,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .part.on .sk-thin{stroke:rgba(153,193,231,.82)}
 .scan{opacity:0}
 .scan-line{fill:none;stroke:var(--mariner);stroke-width:2}
-.scan-fill{fill:rgba(38,122,211,.15)}
+.scan-fill{fill:rgba(38,122,211,.11)}
 .scan-hi{fill:none;stroke:var(--corn);stroke-width:2}
 
 /* ---------- nav ---------- */
@@ -132,7 +132,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .nav__links a:hover{color:var(--corn)}
 @media (max-width:880px){.nav__links{display:none}}
 #prog{position:fixed;top:0;left:0;height:1px;width:100%;transform:scaleX(0);transform-origin:0 50%;
-  background:var(--corn);z-index:101;opacity:.9}
+  background:var(--torch);z-index:101;opacity:.95}
 
 /* ---------- scenes ---------- */
 .scene{position:relative;z-index:2}
@@ -149,7 +149,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .hero__strip div{flex:1 1 128px;padding:.9rem 1rem .2rem 0}
 .hero__strip div+div{border-left:1px solid var(--line);padding-left:1rem}
 .hero__strip b{display:block;font-family:var(--mono);font-weight:500;font-size:1.45rem;
-  color:var(--corn);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  color:var(--oasis);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .hero__strip i{font-style:normal;font-size:.62em}
 .hero__strip span{display:block;font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-faint);margin-top:.3rem}
@@ -168,12 +168,12 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .cal__item.on{opacity:1;pointer-events:auto;transform:none;
   transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .cal__ix{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.2em;color:var(--ink-faint)}
-.cal__ix b{color:var(--corn);font-weight:500}
+.cal__ix b{color:var(--torch);font-weight:500}
 .cal__title{font-size:var(--t-h2);margin:var(--s2) 0}
 .cal__sub{font-size:var(--t-body);color:var(--ink);max-width:44ch}
-.cal__num{font-family:var(--mono);font-weight:500;font-size:var(--t-num);color:var(--corn);
+.cal__num{font-family:var(--mono);font-weight:500;font-size:var(--t-num);color:var(--oasis);
   font-variant-numeric:tabular-nums;letter-spacing:-.025em;line-height:1;margin:var(--s4) 0 .3rem}
-.cal__num i{font-style:normal;font-size:.36em;color:rgba(153,193,231,.62);margin-left:.1em}
+.cal__num i{font-style:normal;font-size:.36em;color:rgba(253,239,201,.55);margin-left:.1em}
 .cal__nl{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;
   text-transform:uppercase;color:var(--ink-faint)}
 .cal__list{margin-top:var(--s4);border-top:1px solid var(--line)}
@@ -183,7 +183,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   touch-action:manipulation}
 .rail button::after{content:"";position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--mariner);
   transform:translateY(-50%);transition:width 280ms var(--ease),background 280ms var(--ease)}
-.rail button[aria-current="true"]::after{width:24px;background:var(--corn)}
+.rail button[aria-current="true"]::after{width:24px;background:var(--torch)}
 .rail button:hover::after{background:var(--mariner)}
 @media (max-width:1200px){.rail{display:none}}
 @media (max-width:900px){
@@ -230,18 +230,18 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 /* strip */
 .strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:var(--s4)}
 .strip li{flex:1 1 auto;padding:.85rem 1.1rem .85rem 0;font-family:var(--mono);font-size:var(--t-label);
-  letter-spacing:.11em;text-transform:uppercase;color:var(--corn)}
+  letter-spacing:.11em;text-transform:uppercase;color:var(--oasis)}
 .strip li+li{border-left:1px solid var(--line);padding-left:1.1rem}
 
 /* flight gates */
 .gates{display:grid;grid-template-columns:repeat(4,1fr);margin-top:var(--s6);border-top:1px solid var(--line)}
 .gates li{padding:var(--s4) var(--s3) var(--s4) 0;position:relative}
 .gates li+li{border-left:1px solid var(--line);padding-left:var(--s3)}
-.gates li::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--corn);
+.gates li::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--torch);
   transition:width 800ms var(--ease)}
 .gates li.on::before{width:100%}
 .gates__n{display:block;font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.2em;
-  color:var(--corn);margin-bottom:var(--s2)}
+  color:var(--oasis);margin-bottom:var(--s2)}
 .gates h3{font-size:var(--t-h3);margin-bottom:.55rem}
 .gates p{font-size:var(--t-small);color:var(--ink-dim)}
 @media (max-width:860px){.gates{grid-template-columns:1fr 1fr}
@@ -267,7 +267,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   color:var(--ink-faint);font-weight:400;border-bottom-color:var(--line-hi)}
 .spec td:first-child{color:var(--white);font-weight:500;width:30%}
 .spec td:nth-child(2){color:var(--ink-dim)}
-.spec td:last-child{font-family:var(--mono);color:var(--corn);font-variant-numeric:tabular-nums;
+.spec td:last-child{font-family:var(--mono);color:var(--oasis);font-variant-numeric:tabular-nums;
   white-space:nowrap;text-align:right;padding-right:0;width:1%}
 .spec caption{caption-side:top;text-align:left;padding-bottom:var(--s3);color:var(--ink-dim);font-size:var(--t-small)}
 @media (max-width:720px){
@@ -288,7 +288,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .foot__meta{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s4);
   padding-top:var(--s4);border-top:1px solid var(--line);
   font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
-.foot__meta a{color:var(--corn);text-decoration:none;text-underline-offset:4px}
+.foot__meta a{color:var(--oasis);text-decoration:none;text-underline-offset:4px}
 .foot__meta a:hover{text-decoration:underline}
 
 /* Reveals are class-driven, never tween-driven. A throttled tab, a
@@ -339,7 +339,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 <div id="prog" aria-hidden="true"></div>
 
 <div class="env" aria-hidden="true">
-  <div id="key"></div><div id="grid"></div><div class="vig"></div>
+  <canvas id="shader"></canvas>
+  <div class="scrim"></div>
+  <div id="grid"></div>
+  <div class="vig"></div>
 </div>
 
 <!-- ONE aircraft for the whole film. Never re-mounted. -->
@@ -664,6 +667,218 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   </div>
 </footer>
 
+<script>
+/* ============================================================
+   Wave field. Vanilla port of the 21st.dev Shader Builder
+   "Waves" component (originally React). No dependencies.
+   Palette retuned to this page: navy ground rising through
+   Mariner to warm Oasis crests, so the field carries the cream
+   rather than adding more blue.
+   ============================================================ */
+(function(){
+  var canvas = document.getElementById('shader');
+  if (!canvas) return;
+  var gl = null;
+  try { gl = canvas.getContext('webgl', { antialias:false, alpha:true }); } catch(e){}
+  if (!gl) { canvas.style.display = 'none'; return; }
+
+  var VERT = 'attribute vec2 a_position;void main(){gl_Position=vec4(a_position,0.0,1.0);}';
+
+  var FRAG = [
+'#ifdef GL_FRAGMENT_PRECISION_HIGH',
+'precision highp float;','#else','precision mediump float;','#endif',
+'uniform vec3 u_colors[8];',
+'uniform vec4 u_scene;uniform vec4 u_shape;uniform vec4 u_surface;',
+'uniform vec4 u_finish;uniform vec4 u_transform;uniform vec4 u_space;',
+'#define u_resolution u_scene.xy',
+'#define u_time u_scene.z',
+'#define u_colorCount u_scene.w',
+'#define u_scale u_shape.x',
+'#define u_intensity u_shape.y',
+'#define u_warp u_shape.w',
+'#define u_detail u_surface.x',
+'#define u_contrast u_surface.y',
+'#define u_brightness u_surface.z',
+'#define u_saturation u_surface.w',
+'#define u_vignette u_finish.y',
+'#define u_blur u_finish.z',
+'#define u_grain u_finish.w',
+'#ifdef GL_FRAGMENT_PRECISION_HIGH',
+'#define u_seed u_transform.x','#else',
+'#define u_seed mod(u_transform.x, 31.0)','#endif',
+'#define u_rotate u_transform.y',
+'#define u_drift u_transform.z',
+'#define u_offset u_space.xy',
+'float hash21(vec2 p){',
+'#ifndef GL_FRAGMENT_PRECISION_HIGH',
+'  p = mod(p, 31.0);','#endif',
+'  p = fract(p * vec2(234.34, 435.345));',
+'  p += dot(p, p + 34.23);',
+'  return fract(p.x * p.y);}',
+'float grainHash(vec2 p){',
+'  vec3 p3 = fract(vec3(p.xyx) * 0.1031);',
+'  p3 += dot(p3, p3.yzx + 33.33);',
+'  return fract((p3.x + p3.y) * p3.z);}',
+'float noise(vec2 p){',
+'  vec2 i = floor(p); vec2 f = fract(p);',
+'  vec2 u = f * f * (3.0 - 2.0 * f);',
+'  return mix(mix(hash21(i), hash21(i + vec2(1.0,0.0)), u.x),',
+'             mix(hash21(i + vec2(0.0,1.0)), hash21(i + vec2(1.0,1.0)), u.x), u.y);}',
+'float fbm(vec2 p){',
+'  float v = 0.0; float a = 0.5;',
+'  for (int i = 0; i < 5; i++){',
+'    v += a * noise(p);',
+'    p = p * 2.03 + vec2(17.0, 9.2);',
+'    a *= 0.5;}',
+'  return v;}',
+'vec3 palette(float x){',
+'  float n = max(u_colorCount - 1.0, 1.0);',
+'  float f = clamp(x, 0.0, 1.0) * n;',
+'  vec3 col = u_colors[0];',
+'  for (int i = 0; i < 7; i++){',
+'    if (float(i) < n)',
+'      col = mix(col, u_colors[i + 1], smoothstep(0.0, 1.0, clamp(f - float(i), 0.0, 1.0)));}',
+'  return col;}',
+'vec3 shade(vec2 uv, vec2 p, float t){',
+'  float y = uv.y',
+'    + sin(uv.x * (3.0 + u_intensity * 9.0) + t * 0.8) * 0.08',
+'    + (fbm(p * 2.0 + t * 0.1) - 0.5) * u_intensity * 0.6;',
+'  return palette(y);}',
+'void main(){',
+'  vec2 uv = gl_FragCoord.xy / u_resolution.xy;',
+'  vec2 screenUv = uv;',
+'  vec2 p = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);',
+'  uv = p * min(u_resolution.x, u_resolution.y) / u_resolution.xy + 0.5;',
+'  p *= u_scale;',
+'  if (abs(u_rotate) > 0.0001){',
+'    float cr = cos(u_rotate), sr = sin(u_rotate);',
+'    p = mat2(cr, -sr, sr, cr) * p;}',
+'  p += u_offset;',
+'  if (u_drift > 0.0001) p += u_drift * vec2(sin(u_time * 0.31), cos(u_time * 0.23));',
+'  if (u_warp > 0.0){',
+'    p += u_warp * (vec2(fbm(p * u_detail + u_seed), fbm(p * u_detail + vec2(5.2,1.3))) - 0.5);}',
+'  vec3 col;',
+'  if (u_blur > 0.0){',
+'    float e = u_blur; float pe = e * u_scale;',
+'    vec2 uvE = vec2(e) * min(u_resolution.x, u_resolution.y) / u_resolution.xy;',
+'    col  = shade(uv, p, u_time) * 0.36;',
+'    col += shade(uv + vec2(uvE.x,0.0), p + vec2(pe,0.0), u_time) * 0.16;',
+'    col += shade(uv - vec2(uvE.x,0.0), p - vec2(pe,0.0), u_time) * 0.16;',
+'    col += shade(uv + vec2(0.0,uvE.y), p + vec2(0.0,pe), u_time) * 0.16;',
+'    col += shade(uv - vec2(0.0,uvE.y), p - vec2(0.0,pe), u_time) * 0.16;',
+'  } else { col = shade(uv, p, u_time); }',
+'  if (abs(u_contrast - 1.0) > 0.0001) col = (col - 0.5) * u_contrast + 0.5;',
+'  if (abs(u_saturation - 1.0) > 0.0001){',
+'    float luma = dot(col, vec3(0.299,0.587,0.114));',
+'    col = mix(vec3(luma), col, u_saturation);}',
+'  if (abs(u_brightness) > 0.0001) col += u_brightness;',
+'  if (u_vignette > 0.0001){',
+'    float vd = length(screenUv - 0.5) * 1.41421356;',
+'    col *= 1.0 - u_vignette * smoothstep(0.35, 1.0, vd);}',
+'  if (u_grain > 0.0001)',
+'    col += (grainHash(gl_FragCoord.xy + vec2(u_seed * 17.0, u_seed * 31.0)) - 0.5) * u_grain;',
+'  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);}'
+].join('\n');
+
+  /* navy -> deep -> Mariner -> Oasis. The warm crest is what puts cream
+     into the field instead of another blue. */
+  var COLORS = [
+    [0.0275,0.0745,0.1412],
+    [0.0549,0.1608,0.2784],
+    [0.1490,0.4784,0.8275],
+    [0.9922,0.9373,0.7882],
+    [0.9922,0.9373,0.7882],
+    [0.9922,0.9373,0.7882],
+    [0.9922,0.9373,0.7882],
+    [0.9922,0.9373,0.7882]
+  ];
+  var U = { colorCount:4, scale:2.0, intensity:0.54, paramA:0.47, warp:0.042,
+    detail:1.536, contrast:1.158, brightness:0.0, saturation:1.0,
+    hue:0.0, vignette:0.21, blur:0.002, grain:0.101,
+    seed:4012.0, rotate:5.6549, offsetX:0.11, offsetY:-0.19, drift:0.116,
+    timeScale:-0.727 };
+
+  function compile(type, src){
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      console.warn('shader:', gl.getShaderInfoLog(sh)); return null;
+    }
+    return sh;
+  }
+  var vs = compile(gl.VERTEX_SHADER, VERT), fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  if (!vs || !fs) { canvas.style.display = 'none'; return; }
+  var prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  gl.deleteShader(vs); gl.deleteShader(fs);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.style.display='none'; return; }
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  var u = {
+    colors:gl.getUniformLocation(prog,'u_colors'),
+    scene:gl.getUniformLocation(prog,'u_scene'),
+    shape:gl.getUniformLocation(prog,'u_shape'),
+    surface:gl.getUniformLocation(prog,'u_surface'),
+    finish:gl.getUniformLocation(prog,'u_finish'),
+    transform:gl.getUniformLocation(prog,'u_transform'),
+    space:gl.getUniformLocation(prog,'u_space')
+  };
+  var flat = []; for (var i=0;i<COLORS.length;i++) flat.push(COLORS[i][0],COLORS[i][1],COLORS[i][2]);
+  gl.uniform3fv(u.colors, new Float32Array(flat));
+  gl.uniform4f(u.shape, U.scale, U.intensity, U.paramA, U.warp);
+  gl.uniform4f(u.surface, U.detail, U.contrast, U.brightness, U.saturation);
+  gl.uniform4f(u.finish, U.hue, U.vignette, U.blur, U.grain);
+  gl.uniform4f(u.transform, U.seed, U.rotate, U.drift, 0.0);
+  gl.uniform4f(u.space, U.offsetX, U.offsetY, 0, 0);
+
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var start = performance.now(), raf = 0, visible = document.visibilityState === 'visible', inView = true;
+
+  function resize(){
+    var b = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rw = Math.max(1, Math.round(b.width * dpr)), rh = Math.max(1, Math.round(b.height * dpr));
+    /* cap total pixels: this is a 7-octave-fbm fragment shader, so area is
+       the whole cost story on a phone */
+    var cap = Math.min(1, Math.sqrt(1400000 / Math.max(1, rw * rh)));
+    var w = Math.max(1, Math.round(rw * cap)), h = Math.max(1, Math.round(rh * cap));
+    if (canvas.width !== w || canvas.height !== h){
+      canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h);
+    }
+  }
+  function draw(now){
+    raf = 0;
+    resize();
+    var t = reduce ? 0 : ((now - start) / 1000) * U.timeScale;
+    gl.uniform4f(u.scene, canvas.width, canvas.height, t, U.colorCount);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (!reduce && visible && inView) raf = requestAnimationFrame(draw);
+  }
+  function kick(){ if (!raf && visible && inView) raf = requestAnimationFrame(draw); }
+
+  document.addEventListener('visibilitychange', function(){
+    visible = document.visibilityState === 'visible';
+    if (visible) kick(); else if (raf){ cancelAnimationFrame(raf); raf = 0; }
+  });
+  if (window.ResizeObserver) new ResizeObserver(function(){ resize(); kick(); }).observe(canvas);
+  else window.addEventListener('resize', function(){ resize(); kick(); });
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function(e){
+      inView = e[0] ? e[0].isIntersecting : true;
+      if (inView) kick(); else if (raf){ cancelAnimationFrame(raf); raf = 0; }
+    }).observe(canvas);
+  }
+  resize();
+  requestAnimationFrame(draw);
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
@@ -848,8 +1063,6 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
     scrollTrigger:{ trigger:track, start:'bottom-=45% bottom', end:'bottom bottom', scrub:.6 }});
 
   /* environment drift */
-  gsap.to('#key',{ yPercent:10, scale:1.2, ease:'none',
-    scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:1.2 }});
   gsap.to('#grid',{ yPercent:-7, ease:'none',
     scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:1.4 }});
 
