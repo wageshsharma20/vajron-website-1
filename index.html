@@ -91,6 +91,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
    The camera moves around it; it does not scroll past.               */
 #craft{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;place-items:center}
 #craft-inner{position:relative;width:min(70vw,840px);will-change:transform;display:grid}
+@media (max-width:900px){#craft-inner{width:min(86vw,430px)}}
 #craft-photo,#craft-schem{grid-area:1/1;width:100%}
 #craft-photo img{width:100%;height:auto;filter:drop-shadow(0 40px 70px rgba(0,0,0,.62))}
 #craft-schem{opacity:0}
@@ -113,39 +114,55 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .scan-hi{fill:none;stroke:var(--corn);stroke-width:2}
 
 /* ---------- nav ---------- */
-/* The header is a light band so the wordmark can sit in its own blue.
-   It is the one fixed surface on the page that is not part of the film. */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;
-  gap:1.5rem;padding-inline:var(--pad);padding-top:env(safe-area-inset-top);
-  background:var(--oasis);border-bottom:1px solid rgba(11,26,46,.16);
-  box-shadow:0 10px 30px rgba(4,10,20,.32)}
-.nav__mark{display:flex;align-items:center;gap:.6rem;text-decoration:none}
-.nav__mark span{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.2em;
-  text-transform:uppercase;color:rgba(11,26,46,.70)}
-.nav__links{display:flex;gap:1.4rem;margin-left:auto}
-.nav__links a{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.11em;
-  text-transform:uppercase;color:rgba(11,26,46,.66);text-decoration:none;white-space:nowrap;
+/* A floating white capsule rather than a full-width band, so the film
+   runs edge to edge behind it and the wordmark sits on its own ground. */
+.nav{position:fixed;left:50%;transform:translateX(-50%);z-index:100;
+  top:calc(clamp(12px,2vh,20px) + env(safe-area-inset-top));
+  display:flex;align-items:center;gap:clamp(.9rem,2vw,2rem);
+  height:56px;padding-inline:clamp(1rem,1.8vw,1.6rem);
+  max-width:calc(100vw - 2*clamp(12px,3vw,28px));
+  background:#fff;border-radius:999px;
+  box-shadow:0 14px 38px rgba(3,9,18,.46),0 2px 8px rgba(3,9,18,.22)}
+.nav__mark{display:flex;align-items:center;gap:.55rem;text-decoration:none;flex:0 0 auto;
+  padding-right:clamp(.5rem,1.4vw,1.1rem);border-right:1px solid rgba(11,26,46,.14)}
+.nav__mark img{flex:0 0 auto;max-width:none;display:block}
+.nav__mark span{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.19em;
+  text-transform:uppercase;color:rgba(11,26,46,.62);white-space:nowrap}
+@media (max-width:1180px){.nav__mark span{display:none}}
+.nav__links{display:flex;gap:clamp(.9rem,1.7vw,1.6rem);align-items:center}
+.nav__links a{font-family:var(--mono);font-size:var(--t-label);letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(11,26,46,.68);text-decoration:none;white-space:nowrap;
   transition:color 180ms var(--ease);touch-action:manipulation}
 .nav__links a:hover{color:#0B1A2E}
-/* the page-wide focus ring is a light cyan; it would vanish on this band */
-.nav :where(a,button):focus-visible{outline-color:#0B1A2E}
-@media (max-width:880px){.nav__links{display:none}}
+/* the page-wide focus ring is a pale cyan; it would vanish on white */
+.nav :where(a,button):focus-visible{outline-color:#0B1A2E;outline-offset:4px}
+@media (max-width:820px){
+  .nav{gap:0;padding-inline:1.25rem;height:50px}
+  .nav__mark{border-right:0;padding-right:0}
+  .nav__mark img{height:23px}
+  .nav__links{display:none}
+}
 #prog{position:fixed;top:0;left:0;height:1px;width:100%;transform:scaleX(0);transform-origin:0 50%;
   background:var(--torch);z-index:101;opacity:.95}
 
 /* ---------- scenes ---------- */
 .scene{position:relative;z-index:2}
 .pin{position:sticky;top:0;height:100svh;display:grid;align-content:center;
-  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:64px}
+  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:86px}
 
 /* 01 hero */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
-  gap:clamp(1.5rem,3vh,3rem);padding-top:calc(64px + var(--s4));padding-bottom:var(--s5)}
+  gap:clamp(1.5rem,3vh,3rem);padding-top:calc(86px + var(--s4));padding-bottom:var(--s5)}
 .hero__copy{position:relative;z-index:2}
 .hero__title{font-size:clamp(2.05rem,1rem + 3.1vw,3.7rem);font-variation-settings:'wdth' 110;
   font-weight:700;letter-spacing:-.032em;line-height:1.02;color:var(--white);max-width:17ch}
 .hero__strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);width:100%;position:relative;z-index:2}
 .hero__strip div{flex:1 1 128px;padding:.9rem 1rem .2rem 0}
+@media (max-width:620px){
+  .hero__strip div{flex:1 1 42%}
+  .hero__strip div:nth-child(3){border-left:0;padding-left:0}
+  .hero__strip div:nth-child(n+3){border-top:1px solid var(--line)}
+}
 .hero__strip div+div{border-left:1px solid var(--line);padding-left:1rem}
 .hero__strip b{display:block;font-family:var(--mono);font-weight:500;font-size:1.45rem;
   color:var(--oasis);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -161,7 +178,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 /* 03 sensor act */
 .act__stage{position:sticky;top:0;height:100svh;display:grid;
   grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);align-items:center;
-  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:64px}
+  max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad);padding-top:86px}
 .cal{position:relative;min-height:450px;z-index:2}
 .cal__item{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(14px)}
 .cal__item.on{opacity:1;pointer-events:auto;transform:none;
@@ -186,7 +203,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .rail button:hover::after{background:var(--mariner)}
 @media (max-width:1200px){.rail{display:none}}
 @media (max-width:900px){
-  .act__stage{grid-template-columns:1fr;align-content:end;padding-bottom:var(--s5)}
+  .act__stage{grid-template-columns:1fr;align-content:end;padding-top:96px;padding-bottom:var(--s5)}
   .cal{min-height:310px}
   .cal__list{display:none}
 }
@@ -480,7 +497,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
 <header class="nav">
   <a class="nav__mark" href="#top">
-    <img src="assets/vajron-logo.png" alt="VAJRON" width="560" height="323" style="height:24px;width:auto">
+    <img src="assets/vajron-logo.png" alt="VAJRON" width="560" height="323" style="height:27px;width:auto">
     <span translate="no">Global Tech</span>
   </a>
   <nav class="nav__links" aria-label="Sections">
@@ -1022,24 +1039,34 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   /* ============ THE CAMERA MOVE ============
      One continuous timeline across hero -> statement -> the act.
      The aircraft never re-mounts; only the camera changes.        */
-  var film = gsap.timeline({
-    scrollTrigger:{
-      trigger:'#main', start:'top top',
-      endTrigger:'#act-track', end:'top top',
-      scrub:1
-    }
-  });
-  film
-    /* hero framing: sits right of the copy */
-    .fromTo(inner, { xPercent:26, yPercent:2, scale:1, rotate:0 },
-                   { xPercent:22, yPercent:-1, scale:1.02, rotate:-1, ease:'none' }, 0)
-    /* the statement: it drifts centre and recedes behind the type */
-    .to(inner, { xPercent:6, yPercent:4, scale:.92, rotate:1.5, ease:'none' }, .34)
-    .to('#craft-photo', { opacity:.42, ease:'none' }, .34)
-    /* arriving at the act: the photograph becomes its own schematic */
-    .to(inner, { xPercent:-22, yPercent:0, scale:1.04, rotate:0, ease:'none' }, .72)
-    .to('#craft-photo', { opacity:0, ease:'none' }, .78)
-    .to('#craft-schem', { opacity:1, ease:'none' }, .80);
+  /* On one column the copy runs full width, so the craft cannot sit beside
+     it; it lifts into the space above the headline instead of landing on
+     top of it. Same film, different framing. */
+  gsap.matchMedia()
+    .add('(min-width: 901px)', function(){ buildFilm(26, 22, 6, -22, 1, 1.02, .92, 1.04, 2, -1, 4, 0); })
+    .add('(max-width: 900px)', function(){ buildFilm(0, 0, 0, 0, .80, .82, .74, .86, -92, -96, -106, -84); });
+
+  function buildFilm(x0, x1, x2, x3, s0, s1, s2, s3, y0, y1, y2, y3){
+    var film = gsap.timeline({
+      scrollTrigger:{
+        trigger:'#main', start:'top top',
+        endTrigger:'#act-track', end:'top top',
+        scrub:1
+      }
+    });
+    film
+      /* hero framing */
+      .fromTo(inner, { xPercent:x0, yPercent:y0, scale:s0, rotate:0 },
+                     { xPercent:x1, yPercent:y1, scale:s1, rotate:-1, ease:'none' }, 0)
+      /* the statement: it drifts and recedes behind the type */
+      .to(inner, { xPercent:x2, yPercent:y2, scale:s2, rotate:1.5, ease:'none' }, .34)
+      .to('#craft-photo', { opacity:.42, ease:'none' }, .34)
+      /* arriving at the act: the photograph becomes its own schematic */
+      .to(inner, { xPercent:x3, yPercent:y3, scale:s3, rotate:0, ease:'none' }, .72)
+      .to('#craft-photo', { opacity:0, ease:'none' }, .78)
+      .to('#craft-schem', { opacity:1, ease:'none' }, .80);
+    return film;
+  }
 
   /* the act itself: stops with a long hold in the middle of each */
   ScrollTrigger.create({
