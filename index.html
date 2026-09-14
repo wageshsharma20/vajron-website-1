@@ -33,7 +33,7 @@
      Torch Red is a STATE only: inhibit, denial, lock. */
   --mariner:#267AD3; --corn:#99C1E7; --oasis:#FDEFC9; --torch:#FE251E;
   --white:#FFF;
-  --ink:rgba(253,239,201,.86); --ink-dim:rgba(253,239,201,.64); --ink-faint:rgba(253,239,201,.40);
+  --ink:rgba(253,239,201,.90); --ink-dim:rgba(253,239,201,.78); --ink-faint:rgba(253,239,201,.64);
   --line:rgba(253,239,201,.17); --line-hi:rgba(253,239,201,.34);
 
   --display:'Archivo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
@@ -81,14 +81,8 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .env{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 /* The wave field. A single WebGL canvas; if the context is unavailable it
    hides itself and the navy ground below carries the page unchanged. */
-#shader{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.55}
-.scrim{position:absolute;inset:0;background:rgba(7,19,36,.52)}
-#grid{position:absolute;inset:-6%;will-change:transform;
-  background-image:linear-gradient(to right,rgba(253,239,201,.05) 1px,transparent 1px),
-                   linear-gradient(to bottom,rgba(253,239,201,.05) 1px,transparent 1px);
-  background-size:96px 96px;
-  -webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%);
-  mask-image:radial-gradient(ellipse 72% 62% at 50% 44%,#000 0%,transparent 78%)}
+#shader{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.9}
+.scrim{position:absolute;inset:0;background:rgba(7,19,36,.34)}
 .vig{position:absolute;inset:0;opacity:.85;
   background:radial-gradient(120% 92% at 50% 44%,transparent 36%,#071324 100%)}
 
@@ -341,7 +335,6 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 <div class="env" aria-hidden="true">
   <canvas id="shader"></canvas>
   <div class="scrim"></div>
-  <div id="grid"></div>
   <div class="vig"></div>
 </div>
 
@@ -783,17 +776,17 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   /* navy -> deep -> Mariner -> Oasis. The warm crest is what puts cream
      into the field instead of another blue. */
   var COLORS = [
-    [0.0275,0.0745,0.1412],
-    [0.0549,0.1608,0.2784],
-    [0.1490,0.4784,0.8275],
-    [0.9922,0.9373,0.7882],
-    [0.9922,0.9373,0.7882],
-    [0.9922,0.9373,0.7882],
-    [0.9922,0.9373,0.7882],
-    [0.9922,0.9373,0.7882]
+    [0.0118,0.0431,0.0784],
+    [0.0392,0.1843,0.3412],
+    [0.0784,0.3255,0.5608],
+    [0.1804,0.5255,0.7843],
+    [0.1804,0.5255,0.7843],
+    [0.1804,0.5255,0.7843],
+    [0.1804,0.5255,0.7843],
+    [0.1804,0.5255,0.7843]
   ];
   var U = { colorCount:4, scale:2.0, intensity:0.54, paramA:0.47, warp:0.042,
-    detail:1.536, contrast:1.158, brightness:0.0, saturation:1.0,
+    detail:1.536, contrast:1.158, brightness:0.0, saturation:1.28,
     hue:0.0, vignette:0.21, blur:0.002, grain:0.101,
     seed:4012.0, rotate:5.6549, offsetX:0.11, offsetY:-0.19, drift:0.116,
     timeScale:-0.727 };
@@ -1061,10 +1054,6 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   gsap.fromTo('#craft', { opacity:1 }, {
     opacity:0, ease:'none', immediateRender:false,
     scrollTrigger:{ trigger:track, start:'bottom-=45% bottom', end:'bottom bottom', scrub:.6 }});
-
-  /* environment drift */
-  gsap.to('#grid',{ yPercent:-7, ease:'none',
-    scrollTrigger:{ trigger:document.body, start:'top top', end:'bottom bottom', scrub:1.4 }});
 
   /* reading progress */
   gsap.to('#prog',{ scaleX:1, ease:'none',
