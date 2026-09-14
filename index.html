@@ -223,6 +223,32 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   .cal{min-height:310px}
   .cal__list{display:none}
 }
+/* A short window is not a small window. The act has to fit a pinned
+   viewport, so when height runs out the craft and the callout both
+   come down a step rather than the craft sliding off the top. */
+@media (max-width:900px) and (max-height:720px){
+  #craft-inner{width:min(62vw,300px)}
+  .act__stage{padding-top:76px;padding-bottom:var(--s4)}
+  .cal{min-height:236px}
+  .cal__title{font-size:clamp(1.25rem,1rem + 1.9vw,1.75rem);margin:var(--s2) 0 .55rem}
+  .cal__sub{font-size:.95rem;line-height:1.5;max-width:40ch}
+  .cal__num{font-size:clamp(2rem,1.2rem + 3.4vw,3.1rem);margin:var(--s3) 0 .2rem}
+}
+@media (max-width:900px) and (max-height:560px){
+  .cal__sub{display:none}
+  .cal{min-height:170px}
+}
+/* The hero has the same squeeze: a fixed craft cannot flow out of the
+   way, so on a short window the copy comes down to leave it a band. */
+@media (max-width:900px) and (max-height:720px){
+  /* anchored rather than centred, so the padding reserves the craft's
+     band predictably instead of being halved by the centring */
+  .hero{justify-content:flex-start;padding-top:196px;padding-bottom:var(--s3);gap:.9rem}
+  .hero__title{font-size:clamp(1.65rem,1.1rem + 2.6vw,2.4rem);max-width:18ch}
+  .hero .lead{font-size:1.02rem;line-height:1.45;max-width:42ch}
+  .hero__strip div{padding:.6rem .8rem .15rem 0}
+  .hero__strip b{font-size:1.2rem}
+}
 
 /* cut to light */
 .light{position:relative;z-index:2;background:var(--oasis);color:#0B1A2E}
@@ -1061,8 +1087,15 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
      it; it lifts into the space above the headline instead of landing on
      top of it. Same film, different framing. */
   gsap.matchMedia()
-    .add('(min-width: 901px)', function(){ buildFilm(26, 22, 6, -22, 1, 1.02, .92, 1.04, 2, -1, 4, 0); })
-    .add('(max-width: 900px)', function(){ buildFilm(0, 0, 0, 0, .80, .82, .74, .86, -90, -94, -104, -82); });
+    .add('(min-width: 901px)', function(){
+      buildFilm(26, 22, 6, -22, 1, 1.02, .92, 1.04, 2, -1, 4, 0); })
+    .add('(max-width: 900px) and (min-height: 721px)', function(){
+      buildFilm(0, 0, 0, 0, .80, .82, .74, .86, -90, -94, -104, -82); })
+    /* yPercent is a share of the craft's own height, so a lift tuned for a
+       tall phone throws it off the top of a short window. Shorter window,
+       smaller craft, smaller lift. */
+    .add('(max-width: 900px) and (max-height: 720px)', function(){
+      buildFilm(0, 0, 0, 0, .72, .74, .68, .78, -53, -57, -66, -56); });
 
   function buildFilm(x0, x1, x2, x3, s0, s1, s2, s3, y0, y1, y2, y3){
     var film = gsap.timeline({
