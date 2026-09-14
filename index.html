@@ -102,7 +102,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
    The camera moves around it; it does not scroll past.               */
 #craft{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;place-items:center}
 #craft-inner{position:relative;width:min(70vw,840px);will-change:transform;display:grid}
-@media (max-width:900px){#craft-inner{width:min(86vw,430px)}}
+@media (max-width:900px){#craft-inner{width:min(92vw,520px)}}
 #craft-photo,#craft-schem{grid-area:1/1;width:100%}
 #craft-photo img{width:100%;height:auto;filter:drop-shadow(0 40px 70px rgba(0,0,0,.62))}
 #craft-schem{opacity:0}
@@ -150,10 +150,23 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .nav__links a[aria-current="true"]:hover{background:#0B1A2E;color:#fff}
 /* the page-wide focus ring is a pale cyan; it would vanish on white */
 .nav :where(a,button):focus-visible{outline-color:#0B1A2E;outline-offset:4px}
-@media (max-width:820px){
-  .nav{gap:0;padding-inline:.8rem;height:52px}
-  .nav__mark{border-right:0;margin-right:0;padding-inline:.3rem}
-  .nav__mark img{height:34px}
+/* The links fit well below the old 820px cut-off; step them down rather
+   than dropping them, and only hide them once they genuinely cannot fit. */
+@media (max-width:900px){
+  .nav{padding-inline:.5rem;height:54px;gap:.2rem}
+  .nav__mark{padding-inline:.45rem;margin-right:.25rem}
+  .nav__mark img{height:36px}
+  .nav__links{gap:0}
+  .nav__links a{font-size:.6rem;letter-spacing:.1em;padding:.45rem .5rem}
+}
+@media (max-width:620px){
+  .nav{padding-inline:.4rem;height:50px}
+  .nav__mark img{height:32px}
+  .nav__links a{font-size:.55rem;letter-spacing:.06em;padding:.4rem .38rem}
+}
+@media (max-width:430px){
+  .nav{gap:0;padding-inline:.9rem}
+  .nav__mark{border-right:0;margin-right:0;padding-inline:.2rem}
   .nav__links{display:none}
 }
 #prog{position:fixed;top:0;left:0;height:1px;width:100%;transform:scaleX(0);transform-origin:0 50%;
@@ -238,7 +251,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
    viewport, so when height runs out the craft and the callout both
    come down a step rather than the craft sliding off the top. */
 @media (max-width:900px) and (max-height:720px){
-  #craft-inner{width:min(62vw,300px)}
+  #craft-inner{width:min(88vw,440px)}
   .act__stage{padding-top:76px;padding-bottom:var(--s4)}
   .cal__sub{line-height:1.5;max-width:40ch}
 }
@@ -775,12 +788,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
       <div class="foot__col">
         <h2 class="foot__label">Contact</h2>
         <a class="foot__url" href="https://www.vajronglobaltech.com" rel="noopener">www.vajronglobaltech.com</a>
-        <div class="foot__seals">
-          <span class="foot__seal"><img src="assets/seal-dda.png" width="300" height="421" loading="lazy"
-                alt="Delhi Development Authority" style="height:54px;width:auto"></span>
-          <span class="foot__seal"><img src="assets/seal-ddagreens.png" width="400" height="382" loading="lazy"
-                alt="DDA Greens" style="height:54px;width:auto"></span>
-        </div>
+
       </div>
 
     </div>
@@ -1160,12 +1168,12 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
     .add('(min-width: 901px)', function(){
       buildFilm(26, 22, 6, -22, 1, 1.02, .92, 1.04, 2, -1, 4, 0); })
     .add('(max-width: 900px) and (min-height: 721px)', function(){
-      buildFilm(0, 0, 0, 0, .80, .82, .74, .86, -90, -94, -104, -82); })
+      buildFilm(0, 0, 0, 0, .88, .90, .82, .98, -74, -78, -88, -70); })
     /* yPercent is a share of the craft's own height, so a lift tuned for a
        tall phone throws it off the top of a short window. Shorter window,
        smaller craft, smaller lift. */
     .add('(max-width: 900px) and (max-height: 720px)', function(){
-      buildFilm(0, 0, 0, 0, .72, .74, .68, .78, -53, -57, -66, -56); });
+      buildFilm(0, 0, 0, 0, .86, .88, .80, .96, -44, -47, -55, -46); });
 
   function buildFilm(x0, x1, x2, x3, s0, s1, s2, s3, y0, y1, y2, y3){
     var film = gsap.timeline({
