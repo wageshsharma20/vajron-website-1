@@ -197,14 +197,35 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .light h2,.light h3{color:#0B1A2E}
 .light .body{color:rgba(11,26,46,.82)}
 .light .lbl{color:#1B5FA8}
-.light figure img{width:100%;height:auto;mix-blend-mode:multiply}
+.light figure img{width:100%;height:auto;max-height:none;mix-blend-mode:multiply}
 .light .cap{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.16em;
   text-transform:uppercase;color:rgba(11,26,46,.58);margin-top:var(--s3)}
 
 /* split */
 .split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:var(--s6);align-items:center}
 .split--rev figure{order:-1}
-@media (max-width:900px){.split{grid-template-columns:1fr;gap:var(--s4)}.split--rev figure{order:0}}
+@media (max-width:900px){
+  .split{grid-template-columns:1fr;gap:var(--s4)}
+  /* Text always leads on one column. Without this the reader scrolls
+     past a full-height image before learning what the section is. */
+  .split figure,.split--rev figure{order:2}
+}
+
+/* Figures.
+   A photograph with a white studio ground reads as a hole punched in the
+   page, so those sit on a deliberate Oasis plate. Cut-out craft renders
+   keep floating on the navy, lit from behind like the hero. */
+.fig{margin:0;min-width:0}
+.fig img{width:100%;height:auto;max-height:56svh;object-fit:contain}
+.fig-plate{background:var(--oasis);padding:clamp(.9rem,2.2vw,1.75rem);border-radius:3px}
+.fig-plate img{mix-blend-mode:multiply}
+.fig-float{position:relative;isolation:isolate}
+.fig-float::before{content:"";position:absolute;inset:-14% -8%;z-index:-1;
+  background:radial-gradient(ellipse 58% 52% at 50% 48%,rgba(38,122,211,.30),transparent 70%);
+  filter:blur(26px)}
+.fig-float img{filter:drop-shadow(0 26px 44px rgba(0,0,0,.55))}
+.fig figcaption{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:var(--s3)}
 
 /* strip */
 .strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:var(--s4)}
@@ -514,7 +535,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   <div class="wrap bay">
     <span class="lbl">General arrangement</span>
     <h2 id="h4a" style="font-size:var(--t-h1);margin-top:var(--s3);max-width:20ch">The same seven, on the aircraft itself</h2>
-    <figure style="margin:var(--s6) 0 0">
+    <figure class="fig" style="margin:var(--s6) 0 0">
       <img src="assets/component-map.jpg" width="1325" height="800" loading="lazy" decoding="async"
            alt="Engineering diagram of the airframe labelling the RTK navigation GPS, upward safety LiDAR rangefinder, upward wide-angle vision sensor, omnidirectional 360 degree LiDAR, front wide-angle vision sensor, 3-axis stabilised AI camera, battery tray and downward-facing precision LiDAR.">
       <figcaption class="cap">Component arrangement, front elevation</figcaption>
@@ -530,10 +551,9 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
     <p class="body dim" style="margin-top:var(--s2)">The same processor fuses LiDAR and camera data for obstacle avoidance, so perception and analysis share one brain. A Linux-based 4G SIM dongle streams results while the aircraft is still flying.</p>
     <ul class="strip"><li>Trained on 100,000+ images</li><li>95%+ monitoring accuracy</li></ul>
   </div>
-  <figure style="margin:0">
+  <figure class="fig fig-plate">
     <img src="assets/jetson.jpg" width="900" height="507" loading="lazy" decoding="async"
-         alt="The NVIDIA Jetson compute module carried on the aircraft."
-         style="border:1px solid var(--line)">
+         alt="The NVIDIA Jetson compute module carried on the aircraft.">
   </figure>
 </section>
 
@@ -581,7 +601,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
 <!-- 09 AIRFRAME -->
 <section class="scene wrap bay split split--rev" id="airframe" aria-labelledby="h9a">
-  <figure style="margin:0">
+  <figure class="fig fig-float">
     <img src="assets/drone-gps.png" width="1260" height="660" loading="lazy" decoding="async"
          alt="The aircraft with landing gear deployed and the RTK navigation mast above the airframe.">
   </figure>
