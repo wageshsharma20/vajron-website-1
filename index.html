@@ -89,7 +89,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .skip:focus{left:1rem;top:1rem}
 
 /* ---------- fixed environment ---------- */
-.env{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.env{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:
+    radial-gradient(120% 86% at 50% 8%,#1D5FA6 0%,#164A82 28%,#0E2E55 56%,#071324 100%),
+    var(--void)}
 /* The wave field. A single WebGL canvas; if the context is unavailable it
    hides itself and the navy ground below carries the page unchanged. */
 #shader{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.9}
@@ -314,6 +317,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 .fig-float::before{content:"";position:absolute;inset:-14% -8%;z-index:-1;
   background:radial-gradient(ellipse 58% 52% at 50% 48%,rgba(38,122,211,.30),transparent 70%);
   filter:blur(26px)}
+[data-tier="lite"] .fig-float::before{filter:none;opacity:.7}
+[data-tier="lite"] .foot__glow{filter:none}
+/* long sections below the fold are skipped until they approach the viewport */
+[data-tier="lite"] .scene:not(.act):not(.hero){content-visibility:auto;contain-intrinsic-size:auto 700px}
 .fig-float img{filter:drop-shadow(0 26px 44px rgba(0,0,0,.55))}
 .fig figcaption{font-family:var(--mono);font-size:var(--t-micro);letter-spacing:var(--tr-label);
   text-transform:uppercase;color:var(--ink-faint);margin-top:var(--s3)}
@@ -415,9 +422,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 
 /* Reveal is driven by the page's observer, not a bare keyframe, so the
    footer cannot be left invisible if the animation never runs. */
-.js .foot__grid > *.rv{filter:blur(4px)}
-.js .foot__grid > *.rv.in{filter:none;transition:opacity .8s var(--ease),
-  transform .8s var(--ease),filter .8s var(--ease)}
+.js .foot__grid > *.rv.in{transition:opacity .8s var(--ease),transform .8s var(--ease)}
 
 /* Reveals are class-driven, never tween-driven. A throttled tab, a
    blocked CDN or a GSAP failure can never leave text invisible. */
@@ -733,7 +738,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 <!-- 09 AIRFRAME -->
 <section class="scene wrap bay split split--rev" id="airframe" aria-labelledby="h9a">
   <figure class="fig fig-float">
-    <img src="assets/drone-gps.png" width="1260" height="660" loading="lazy" decoding="async"
+    <img src="assets/drone-gps-760.png"
+         srcset="assets/drone-gps-760.png 760w, assets/drone-gps.png 1260w"
+         sizes="(max-width:900px) 92vw, 46vw"
+         width="1260" height="660" loading="lazy" decoding="async"
          alt="The aircraft with landing gear deployed and the RTK navigation mast above the airframe.">
   </figure>
   <div>
@@ -849,6 +857,7 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 '#define u_seed mod(u_transform.x, 31.0)','#endif',
 '#define u_rotate u_transform.y',
 '#define u_drift u_transform.z',
+'#define u_octaves u_transform.w',
 '#define u_offset u_space.xy',
 'float hash21(vec2 p){',
 '#ifndef GL_FRAGMENT_PRECISION_HIGH',
@@ -867,7 +876,10 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
 '             mix(hash21(i + vec2(0.0,1.0)), hash21(i + vec2(1.0,1.0)), u.x), u.y);}',
 'float fbm(vec2 p){',
 '  float v = 0.0; float a = 0.5;',
+/* GLSL ES 1.0 needs a constant bound, but an early break off a uniform is
+   legal and lets a weak GPU run three octaves instead of five. */
 '  for (int i = 0; i < 5; i++){',
+'    if (float(i) >= u_octaves) break;',
 '    v += a * noise(p);',
 '    p = p * 2.03 + vec2(17.0, 9.2);',
 '    a *= 0.5;}',
@@ -975,27 +987,66 @@ p{margin:0} ul,ol{margin:0;padding:0;list-style:none} a{color:inherit}
   gl.uniform3fv(u.colors, new Float32Array(flat));
   gl.uniform4f(u.shape, U.scale, U.intensity, U.paramA, U.warp);
   gl.uniform4f(u.surface, U.detail, U.contrast, U.brightness, U.saturation);
-  gl.uniform4f(u.finish, U.hue, U.vignette, U.blur, U.grain);
-  gl.uniform4f(u.transform, U.seed, U.rotate, U.drift, 0.0);
+  /* Device tier. The field is a seven-fbm fragment shader, so its cost is
+     area x octaves x blur taps. Weak hardware gets fewer of each, and if
+     frames are still long at runtime the canvas is dropped for a static
+     gradient that already sits behind it. */
+  var TIER = (function(){
+    var cores = navigator.hardwareConcurrency || 4;
+    var mem = navigator.deviceMemory || 4;
+    var coarse = matchMedia('(pointer: coarse)').matches;
+    var small = Math.min(screen.width, screen.height) <= 500;
+    if (cores <= 4 || mem <= 4 || (coarse && small)) return 'lite';
+    /* a touch device is the signal here, not core count: plenty of
+       desktops report 8 cores and render this comfortably */
+    if (coarse || cores <= 6) return 'mid';
+    return 'full';
+  })();
+  document.documentElement.setAttribute('data-tier', TIER);
+
+  var PROFILE = {
+    full: { px: 1400000, dpr: 2,   octaves: 5, blur: U.blur },
+    mid:  { px:  900000, dpr: 1.5, octaves: 4, blur: 0 },
+    lite: { px:  420000, dpr: 1,   octaves: 3, blur: 0 }
+  }[TIER];
+
+  gl.uniform4f(u.finish, U.hue, U.vignette, PROFILE.blur, U.grain);
+  gl.uniform4f(u.transform, U.seed, U.rotate, U.drift, PROFILE.octaves);
   gl.uniform4f(u.space, U.offsetX, U.offsetY, 0, 0);
 
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   var start = performance.now(), raf = 0, visible = document.visibilityState === 'visible', inView = true;
 
   function resize(){
     var b = canvas.getBoundingClientRect();
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, PROFILE.dpr);
     var rw = Math.max(1, Math.round(b.width * dpr)), rh = Math.max(1, Math.round(b.height * dpr));
-    /* cap total pixels: this is a 7-octave-fbm fragment shader, so area is
-       the whole cost story on a phone */
-    var cap = Math.min(1, Math.sqrt(1400000 / Math.max(1, rw * rh)));
+    var cap = Math.min(1, Math.sqrt(PROFILE.px / Math.max(1, rw * rh)));
     var w = Math.max(1, Math.round(rw * cap)), h = Math.max(1, Math.round(rh * cap));
     if (canvas.width !== w || canvas.height !== h){
       canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h);
     }
   }
+  /* Watch real frame times for the first few seconds. Hardware lies about
+     its capability, so the measurement is the authority, not the tier. */
+  var samples = [], lastFrame = 0, retired = false;
+  function retire(){
+    if (retired) return; retired = true;
+    canvas.style.display = 'none';
+    document.documentElement.setAttribute('data-field', 'static');
+    if (raf){ cancelAnimationFrame(raf); raf = 0; }
+  }
   function draw(now){
     raf = 0;
+    if (lastFrame && samples.length < 90) samples.push(now - lastFrame);
+    lastFrame = now;
+    if (samples.length === 90){
+      var sorted = samples.slice().sort(function(a,b){ return a-b; });
+      var med = sorted[45];
+      samples.push(0);           // stop collecting
+      if (med > 34) { retire(); return; }   // under ~30fps: not worth the cost
+    }
     resize();
     var t = reduce ? 0 : ((now - start) / 1000) * U.timeScale;
     gl.uniform4f(u.scene, canvas.width, canvas.height, t, U.colorCount);
