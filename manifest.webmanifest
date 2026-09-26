@@ -1,0 +1,13 @@
+{
+  "name": "VAJRON Inspection UAS",
+  "short_name": "VAJRON UAS",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#061430",
+  "theme_color": "#061430",
+  "icons": [
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

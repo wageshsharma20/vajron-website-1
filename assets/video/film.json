@@ -1,0 +1,41 @@
+{
+ "chapters": [
+  {
+   "id": "intro",
+   "start": 0.0
+  },
+  {
+   "id": "camera",
+   "start": 1.15
+  },
+  {
+   "id": "lidar",
+   "start": 3.633
+  },
+  {
+   "id": "vision",
+   "start": 6.283
+  },
+  {
+   "id": "airframe",
+   "start": 8.933
+  },
+  {
+   "id": "uplidar",
+   "start": 10.667
+  },
+  {
+   "id": "downlidar",
+   "start": 13.317
+  },
+  {
+   "id": "rtk",
+   "start": 16.633
+  },
+  {
+   "id": "battery",
+   "start": 19.45
+  }
+ ],
+ "duration": 22.867
+}
