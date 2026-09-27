@@ -1,40 +1,30 @@
-# VAJRON Inspection UAS
+# VAJRON AI Inspection Drone
 
-Technical specification page for the VAJRON autonomous inspection aircraft.
+Product website for the VAJRON autonomous inspection drone, laid out for iPad
+presentation at exhibitions (portrait and landscape) and scaling to booth screens.
 
-A scroll-driven single page. One aircraft element is held in a fixed layer for
-the whole first half of the page, and a scrubbed timeline moves the camera
-around it, so the craft never re-mounts as you scroll. At the sensor sequence
-the photograph dissolves into an authored SVG schematic of the same airframe,
-and seven pinned stops each highlight a component, draw its scan geometry and
-anchor a leader line to it.
+- Single static page (`index.html`): markup, styles and scripts, no build step.
+  Type is Manrope and IBM Plex Mono from Google Fonts.
+- Every specification figure comes from the VAJRON product deck.
+- Product imagery, the film and the video loops are rendered from a procedural
+  3D model of the aircraft (`tools/uas.js`, three.js) built from the deck's
+  reference images. The system kit and edge-computer photos come from the deck.
+- Reveals, counters and video playback use IntersectionObserver; videos load
+  lazily and only play while on screen. `?expo` (or the E key) enlarges type
+  for a booth display. The datasheet prints to A4.
 
 ## Running locally
 
-No build step. Serve the folder over HTTP so the assets resolve:
-
 ```bash
-python3 -m http.server 4173
+python3 -m http.server 4191
 ```
 
-Then open <http://localhost:4173>.
+Then open <http://localhost:4191>.
 
-## Structure
+## Re-rendering media
 
-```
-index.html      the entire page: markup, styles and choreography
-assets/         aircraft renders, component diagram, logos and seals
-```
-
-## Notes
-
-- GSAP and ScrollTrigger load from cdnjs; type is Archivo and IBM Plex Mono
-  from Google Fonts. Nothing else is fetched at runtime.
-- No text on the page depends on an animation to become visible. Reveals are
-  CSS classes driven by IntersectionObserver, with a timed failsafe, so a
-  throttled tab or a blocked CDN cannot leave content hidden.
-- `prefers-reduced-motion` unpins the sensor sequence and renders all seven
-  systems as a static stack.
-- Every specification figure comes from the VAJRON product deck.
+`tools/render.html` holds the shots; `node tools/capture.mjs <jobs.json>` drives
+headless Chrome to save frames, which are then encoded with ffmpeg.
+`tools/` is excluded from deployment (`.vercelignore`).
 
 (c) VAJRON Global Tech Pvt. Ltd.

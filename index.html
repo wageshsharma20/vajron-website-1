@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>VAJRON AI Inspection Drone</title>
-<meta name="description" content="VAJRON Inspection UAS: autonomous quadrotor for aerial inspection and site monitoring, with a 3-axis 30x zoom camera, 360 degree LiDAR obstacle sensing, onboard NVIDIA Jetson edge AI and centimetre-level RTK navigation.">
+<title>VAJRON AI Inspection Drone | Autonomous Aerial Inspection</title>
+<meta name="description" content="VAJRON AI Inspection Drone: autonomous quadrotor for aerial inspection and site monitoring, with a 3-axis 30x zoom camera, 360 degree LiDAR obstacle sensing, onboard NVIDIA Jetson edge AI and centimetre-level RTK navigation.">
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VAJRON UAS">
-<meta property="og:title" content="VAJRON Inspection UAS">
+<meta property="og:title" content="VAJRON AI Inspection Drone">
 <meta property="og:description" content="Autonomous inspection UAS with onboard edge AI, 360 degree LiDAR obstacle sensing and centimetre-level RTK navigation.">
 <meta property="og:image" content="assets/og-image.jpg">
 <meta property="og:type" content="website">
@@ -32,7 +32,7 @@
 </script>
 <style>
 /* =====================================================================
-   VAJRON Inspection UAS
+   VAJRON AI Inspection Drone
    Black grounds first, white and light grey reading surfaces second,
    VAJRON blue only as the accent. Soft radii throughout. Laid out for
    tablets first (iPad portrait and landscape), scaling up to booth
@@ -756,6 +756,34 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 :is(.light,.white) .head--center h2::after{margin-inline:auto}
 /* footer in deep navy */
 .foot{background:#06122A;color:#9DB0CC}
+/* ---------- v4: fewer template-style details ---------- */
+/* the product name in solid white rather than gradient text */
+.hero__title .brand{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#fff}
+/* no accent bar under section headings */
+:is(.light,.white) .head h2::after{content:none}
+/* chapter details as one plain caption line rather than pill chips */
+.chapter__foot{gap:0}
+html .chapter__foot span{background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;border-radius:0;padding:.15rem .95rem;font-weight:600;color:rgba(255,255,255,.92);text-shadow:0 1px 14px rgba(0,0,0,.65)}
+html .chapter__foot span + span{box-shadow:inset 1px 0 0 rgba(255,255,255,.38)}
+/* short rule bullets rather than circled check marks */
+.ticks li{grid-template-columns:.95rem 1fr;gap:.7rem}
+html .ticks li::before{width:.75rem;height:2px;border-radius:2px;margin-top:.74em;background:rgba(255,255,255,.7)}
+html :is(.light,.white) .ticks li::before{background:var(--blue)}
+html .onreq .ticks li::before{background:#fff}
+/* icons on their own, without tinted tiles */
+html .ico.ico{width:auto;height:auto;background:none;border-radius:0;display:block;place-items:start;justify-items:start}
+html .ico.ico svg{width:1.75rem;height:1.75rem}
+html :is(.light,.white) .ico.ico,html .role .ico.ico{color:var(--blue)}
+/* interaction hint as plain text */
+.hero__hint{background:none}
+/* contact card with the email and phone row */
+.ct__card--4{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ct__card--4 > div:last-child{grid-column:1/-1}
+.ct__card a{color:#fff}
+@media (orientation:portrait) and (min-width:640px), (max-width:900px){.ct__card--4{grid-template-columns:repeat(2,minmax(0,1fr))}.ct__card--4 > div:nth-child(3){grid-column:1/-1}}
+@media (max-width:639px){.ct__card--4{grid-template-columns:1fr}}
+/* chapter titles never outgrow the space above the video */
+.chapter__title h2{font-size:min(clamp(2.2rem,1.1rem + 3vw,4.4rem),7svh)}
 /* THEME-V2-END */
 </style>
 </head>
@@ -801,7 +829,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   <div class="hero__inner">
     <div class="hero__copy">
       <h1 class="hero__title" id="hero-title"><span class="brand">VAJRON</span> AI Inspection&nbsp;Drone</h1>
-      <p class="hero__lede">Autonomous aerial inspection with onboard edge AI.</p>
+      <p class="hero__lede">Autonomous missions, 360&deg; obstacle sensing and a 30&times; zoom camera.</p>
       <div class="hero__actions x-hide">
         <a class="btn btn--light" href="#film-player" data-film-play>
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.2v9.6c0 .5.5.8.9.5l7.4-4.8a.6.6 0 0 0 0-1L5.9 2.7c-.4-.3-.9 0-.9.5z"/></svg>
@@ -817,8 +845,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
           <picture class="hero__pic">
             <source type="image/webp" srcset="assets/cutout/drone-760.webp 760w, assets/cutout/drone-1200.webp 1200w, assets/cutout/drone-2000.webp 2000w"
                     sizes="(orientation: portrait) 92vw, 64vw">
-            <img src="assets/cutout/drone-1200.png" width="1200" height="662" fetchpriority="high" decoding="async"
-                 alt="VAJRON Inspection UAS seen from below at three-quarters: quadrotor airframe, four rotor arms with red motor collars, underslung 3-axis gimbal camera and landing gear.">
+            <img src="assets/cutout/drone-1200.png" width="1200" height="711" fetchpriority="high" decoding="async"
+                 alt="VAJRON AI Inspection Drone at three-quarters from the front: faceted sensor dome with the RTK mast, grey body with the VAJRON mark, four carbon rotor arms with red end caps, a 3-axis gimbal camera and landing gear.">
           </picture>
         </div>
       </div>
@@ -854,7 +882,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       <div class="player__screen" id="film-player">
         <video class="player__video" muted playsinline loop preload="none" poster="assets/video/film-poster.jpg"
                data-src="assets/video/film-1920.mp4" data-src-small="assets/video/film-1280.mp4" data-autoplay
-               aria-label="Rendered product film of the VAJRON Inspection UAS, showing each system in turn"></video>
+               aria-label="Rendered product film of the VAJRON AI Inspection Drone, showing each system in turn"></video>
         <div class="player__shade" aria-hidden="true"></div>
         <div class="player__cap" aria-live="polite">
           <span class="player__num">00</span>
@@ -864,14 +892,14 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       </div>
       <ol class="chapters" aria-label="Film chapters">
         <li><button type="button" data-t="0" data-fact="Autonomous quadrotor with a modular carbon-fibre airframe."><span class="chapters__bar"><i></i></span><span class="chapters__num">00</span><span class="chapters__name">Aircraft</span></button></li>
-        <li><button type="button" data-t="1.15" data-fact="3-axis stabilised AI camera with 30&times; optical zoom and a 4K sensor."><span class="chapters__bar"><i></i></span><span class="chapters__num">01</span><span class="chapters__name">Gimbal camera</span></button></li>
-        <li><button type="button" data-t="3.633" data-fact="Omnidirectional obstacle detection with a 15 m radius."><span class="chapters__bar"><i></i></span><span class="chapters__num">02</span><span class="chapters__name">360&deg; LiDAR</span></button></li>
-        <li><button type="button" data-t="6.283" data-fact="Wide-angle forward sensor with a 120&deg; field of view."><span class="chapters__bar"><i></i></span><span class="chapters__num">03</span><span class="chapters__name">Forward vision</span></button></li>
-        <li><button type="button" data-t="8.933" data-fact="Four rotor arms and redundant avionics on one structure."><span class="chapters__bar"><i></i></span><span class="chapters__num">04</span><span class="chapters__name">Airframe</span></button></li>
-        <li><button type="button" data-t="10.667" data-fact="Overhead ranging at 500 Hz over 0.2&ndash;20 m, and a 40 m clearance scan before take-off."><span class="chapters__bar"><i></i></span><span class="chapters__num">05</span><span class="chapters__name">Upward LiDAR</span></button></li>
-        <li><button type="button" data-t="13.317" data-fact="Millimetre-level height above ground for precision landing."><span class="chapters__bar"><i></i></span><span class="chapters__num">06</span><span class="chapters__name">Downward LiDAR</span></button></li>
-        <li><button type="button" data-t="16.633" data-fact="Centimetre-level positioning with GPS, GLONASS, Galileo and BeiDou."><span class="chapters__bar"><i></i></span><span class="chapters__num">07</span><span class="chapters__name">RTK GNSS</span></button></li>
-        <li><button type="button" data-t="19.45" data-fact="Protected, IP54-rated tray. Battery exchange in under 2 minutes."><span class="chapters__bar"><i></i></span><span class="chapters__num">08</span><span class="chapters__name">Battery tray</span></button></li>
+        <li><button type="button" data-t="2.6" data-fact="3-axis stabilised AI camera with 30&times; optical zoom and a 4K sensor."><span class="chapters__bar"><i></i></span><span class="chapters__num">01</span><span class="chapters__name">Gimbal camera</span></button></li>
+        <li><button type="button" data-t="5.2" data-fact="Omnidirectional obstacle detection with a 15 m radius."><span class="chapters__bar"><i></i></span><span class="chapters__num">02</span><span class="chapters__name">360&deg; LiDAR</span></button></li>
+        <li><button type="button" data-t="7.8" data-fact="Wide-angle forward sensor with a 120&deg; field of view."><span class="chapters__bar"><i></i></span><span class="chapters__num">03</span><span class="chapters__name">Forward vision</span></button></li>
+        <li><button type="button" data-t="10.2" data-fact="Four rotor arms and redundant avionics on one structure."><span class="chapters__bar"><i></i></span><span class="chapters__num">04</span><span class="chapters__name">Airframe</span></button></li>
+        <li><button type="button" data-t="12.6" data-fact="Overhead ranging at 500 Hz over 0.2&ndash;20 m, and a 40 m clearance scan before take-off."><span class="chapters__bar"><i></i></span><span class="chapters__num">05</span><span class="chapters__name">Upward LiDAR</span></button></li>
+        <li><button type="button" data-t="15.0" data-fact="Millimetre-level height above ground for precision landing."><span class="chapters__bar"><i></i></span><span class="chapters__num">06</span><span class="chapters__name">Downward LiDAR</span></button></li>
+        <li><button type="button" data-t="17.6" data-fact="Centimetre-level positioning with GPS, GLONASS, Galileo and BeiDou."><span class="chapters__bar"><i></i></span><span class="chapters__num">07</span><span class="chapters__name">RTK GNSS</span></button></li>
+        <li><button type="button" data-t="20.0" data-fact="Protected, IP54-rated tray. Battery exchange in under 2 minutes."><span class="chapters__bar"><i></i></span><span class="chapters__num">08</span><span class="chapters__name">Battery tray</span></button></li>
       </ol>
       <p class="player__note x-hide">Rendered product film. Tap a chapter to jump to it.</p>
     </div>
@@ -891,13 +919,13 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
         <img src="assets/studio/elevation-1000.jpg"
              srcset="assets/studio/elevation-1000.jpg 1000w, assets/studio/elevation-2000.jpg 2000w"
              sizes="(orientation: portrait) 92vw, 58vw" width="1000" height="625" loading="lazy" decoding="async"
-             alt="Front elevation of the VAJRON Inspection UAS showing the RTK navigation mast, upper sensor housing, four rotor arms, gimbal camera and landing gear.">
-        <span class="pin" style="left:36.0%;top:40.6%;--i:0" aria-hidden="true">01</span>
-        <span class="pin" style="left:29.0%;top:36.8%;--i:1" aria-hidden="true">02</span>
-        <span class="pin" style="left:52.3%;top:14.8%;--i:2" aria-hidden="true">03</span>
-        <span class="pin" style="left:52.4%;top:24.0%;--i:3" aria-hidden="true">04</span>
-        <span class="pin" style="left:51.8%;top:56.1%;--i:4" aria-hidden="true">05</span>
-        <span class="pin" style="left:60.5%;top:71.2%;--i:5" aria-hidden="true">06</span>
+             alt="Front elevation of the VAJRON AI Inspection Drone showing the RTK navigation mast, upper sensor housing, four rotor arms, gimbal camera and landing gear.">
+        <span class="pin" style="left:55.7%;top:46.4%;--i:0" aria-hidden="true">01</span>
+        <span class="pin" style="left:23.0%;top:41.1%;--i:1" aria-hidden="true">02</span>
+        <span class="pin" style="left:50.0%;top:11.0%;--i:2" aria-hidden="true">03</span>
+        <span class="pin" style="left:50.0%;top:36.0%;--i:3" aria-hidden="true">04</span>
+        <span class="pin" style="left:50.0%;top:68.1%;--i:4" aria-hidden="true">05</span>
+        <span class="pin" style="left:62.0%;top:83.1%;--i:5" aria-hidden="true">06</span>
       </figure>
       <div data-reveal>
         <ol class="ga__legend">
@@ -1139,7 +1167,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
             <p class="tile__d">GPS, GLONASS, Galileo and BeiDou, with differential corrections from a ground base. Repeatable waypoints, near-zero drift.</p></div>
         </article>
         <article class="tile" data-reveal style="--i:1">
-          <div class="tile__media tile__media--white"><img src="assets/jetson.jpg" width="900" height="507" loading="lazy" decoding="async" alt="NVIDIA Jetson module, the aircraft's onboard edge computer."></div>
+          <div class="tile__media tile__media--white"><img src="assets/jetson.jpg" width="1600" height="901" loading="lazy" decoding="async" alt="NVIDIA Jetson module, the aircraft's onboard edge computer."></div>
           <div class="tile__body"><p class="tile__k">Edge computer</p><p class="tile__v">NVIDIA<small>Jetson</small></p>
             <p class="tile__d">Live video analytics on the aircraft. Trained on 100,000+ images, 95%+ monitoring accuracy.</p></div>
         </article>
@@ -1154,7 +1182,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       <figure class="arch" data-reveal data-live>
         <div class="arch__head"><h3>System architecture</h3><p>Data flow on the aircraft and to the ground segment</p></div>
         <svg class="arch__l" viewBox="0 0 1200 640" role="img" aria-labelledby="ar-t ar-d" data-smil>
-          <title id="ar-t">VAJRON Inspection UAS system architecture</title>
+          <title id="ar-t">VAJRON AI Inspection Drone system architecture</title>
           <desc id="ar-d">On the aircraft, perception sensors and the gimbal camera feed an onboard NVIDIA Jetson edge computer, which provides obstacle data to flight control and sends results to the communications link. RTK GNSS navigation, corrected by a ground base station, feeds flight control. The 4G link serves the mobile application and the ground control station. A protected battery tray with battery management supplies all subsystems.</desc>
           <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="#A1A1A6"/></marker></defs>
           <g font-family="Manrope, sans-serif">
@@ -1213,7 +1241,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
         </svg>
 
         <svg class="arch__p" viewBox="0 0 700 1200" role="img" aria-labelledby="ap-t ap-d" data-smil>
-          <title id="ap-t">VAJRON Inspection UAS system architecture</title>
+          <title id="ap-t">VAJRON AI Inspection Drone system architecture</title>
           <desc id="ap-d">Perception sensors and the gimbal camera feed the onboard NVIDIA Jetson edge computer. The edge computer sends results to the 4G communications link and obstacle data to flight control. RTK navigation, corrected by the ground base station, feeds flight control. The 4G link serves the ground control station and the mobile application. The protected battery tray supplies all subsystems.</desc>
           <defs><marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="#A1A1A6"/></marker></defs>
           <g font-family="Manrope, sans-serif">
@@ -1323,8 +1351,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
         <h2>Aircraft, station and base</h2>
       </header>
       <figure class="kit" data-reveal>
-        <img src="assets/system-kit.jpg" srcset="assets/system-kit-900.jpg 900w, assets/system-kit.jpg 1400w" sizes="(max-width:1400px) 92vw, 80rem"
-             width="1400" height="639" loading="lazy" decoding="async"
+        <img src="assets/system-kit.jpg" srcset="assets/system-kit-900.jpg 1000w, assets/system-kit.jpg 2000w" sizes="(max-width:1400px) 92vw, 80rem"
+             width="2000" height="913" loading="lazy" decoding="async"
              alt="System kit on a table: the VAJRON aircraft, a ground station display, an RTK base antenna on a tripod, a battery and charger.">
         <figcaption>System kit: aircraft, ground station, RTK base station and battery set.</figcaption>
       </figure>
@@ -1396,7 +1424,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     <div class="ds-top" data-reveal>
       <header class="head">
         <p class="eyebrow">Technical specifications</p>
-        <h2 id="spec-title">VAJRON Inspection UAS datasheet</h2>
+        <h2 id="spec-title">VAJRON AI Inspection Drone datasheet</h2>
         <p class="head__lede x-hide">Values as published by VAJRON Global Tech.</p>
       </header>
       <button class="btn btn--ink" type="button" data-print>
@@ -1483,7 +1511,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
             <tr><th scope="row">Training set</th><td><strong class="num">100,000+</strong> images</td></tr>
             <tr><th scope="row">Monitoring accuracy</th><td><strong class="num">95%+</strong></td></tr>
           </table>
-          <div class="ds-group__media ds-group__media--white"><img src="assets/jetson.jpg" width="900" height="507" loading="lazy" decoding="async" alt=""></div>
+          <div class="ds-group__media ds-group__media--white"><img src="assets/jetson.jpg" width="1600" height="901" loading="lazy" decoding="async" alt=""></div>
         </section>
         <section class="ds-group" id="g7" role="tabpanel" aria-labelledby="t7">
           <h3><span>07</span>Communications</h3>
@@ -1492,7 +1520,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
             <tr><th scope="row">Live results</th><td>Streamed to mobile application in flight</td></tr>
             <tr><th scope="row">Ground station</th><td>Live video detection feed, emergency manual RTL</td></tr>
           </table>
-          <div class="ds-group__media ds-group__media--white"><img src="assets/system-kit-900.jpg" width="900" height="411" loading="lazy" decoding="async" alt=""></div>
+          <div class="ds-group__media ds-group__media--white"><img src="assets/system-kit-900.jpg" width="1000" height="457" loading="lazy" decoding="async" alt=""></div>
         </section>
         <section class="ds-group" id="g8" role="tabpanel" aria-labelledby="t8">
           <h3><span>08</span>Operations and safety</h3>
@@ -1513,7 +1541,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
             <tr><th scope="row">Mobile application</th><td>Live monitoring, alerts, downloadable reports, flight records</td></tr>
             <tr><th scope="row">Data security</th><td>Encrypted, officials-only access</td></tr>
           </table>
-          <div class="ds-group__media ds-group__media--white"><img src="assets/system-kit-900.jpg" width="900" height="411" loading="lazy" decoding="async" alt=""></div>
+          <div class="ds-group__media ds-group__media--white"><img src="assets/system-kit-900.jpg" width="1000" height="457" loading="lazy" decoding="async" alt=""></div>
         </section>
       </div>
     </div>
@@ -1538,14 +1566,15 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
       <div class="ct__craft" data-reveal style="--i:1">
         <picture>
           <source type="image/webp" srcset="assets/cutout/drone-760.webp 760w, assets/cutout/drone-1200.webp 1200w" sizes="(orientation: portrait) 90vw, 45vw">
-          <img src="assets/cutout/drone-1200.png" width="1200" height="662" loading="lazy" decoding="async" alt="">
+          <img src="assets/cutout/drone-1200.png" width="1200" height="711" loading="lazy" decoding="async" alt="">
         </picture>
       </div>
     </div>
-    <dl class="ct__card" data-reveal>
+    <dl class="ct__card ct__card--4" data-reveal>
       <div><dt>Manufacturer</dt><dd>VAJRON Global Tech Pvt. Ltd.</dd></div>
-      <div><dt>Product</dt><dd>VAJRON Inspection UAS</dd></div>
+      <div><dt>Product</dt><dd>VAJRON AI Inspection Drone</dd></div>
       <div><dt>Web</dt><dd><a href="https://www.vajronglobaltech.com" rel="noopener">www.vajronglobaltech.com</a></dd></div>
+      <div><dt>Email and phone</dt><dd><a href="mailto:info@vajronglobaltech.com">info@vajronglobaltech.com</a> &#183; <a href="tel:+919818805137">+91 98188 05137</a></dd></div>
     </dl>
   </div>
 </section>
